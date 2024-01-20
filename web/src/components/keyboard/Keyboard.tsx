@@ -1,29 +1,55 @@
 import { KeyboardBase } from './KeyboardBase';
 import { Key } from './Key';
+import Square from '../common/Square';
 
 type Props = {
   onClick: (value: string) => void;
+  onNewGameClick?: () => void;
 };
 
-export const Keyboard = ({ onClick }: Props) => {
+export const Keyboard = ({ onClick, onNewGameClick }: Props) => {
   const onValueClick = (value: string) => {
     onClick?.(value);
   };
 
   return (
-    <KeyboardBase onClick={onValueClick}>
-      <div className="flex items-center justify-center">
-        {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((key) => (
-          <Key key={key} value={key} onClick={onValueClick} />
-        ))}
+    <KeyboardBase
+      className="w-full text-lg font-medium text-gray-800 dark:text-white"
+      onClick={onValueClick}
+    >
+      <div className="flex w-full flex-col justify-center">
+        <div className="flex items-center justify-around">
+          {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((key) => (
+            <div key={key} className="basis-1/12">
+              <Square>
+                <Key
+                  className="h-full w-full bg-gray-50 hover:bg-gray-100"
+                  key={key}
+                  value={key}
+                  onClick={onValueClick}
+                />
+              </Square>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 flex items-center justify-around">
+          <Key
+            className="h-10 w-full bg-gray-50 hover:bg-gray-100"
+            key={'Delete'}
+            value={'Backspace'}
+            onClick={onValueClick}
+          >
+            Delete
+          </Key>
+          <Key
+            className="ml-4 h-10 w-full bg-blue-500 text-white hover:bg-blue-600"
+            value=""
+            onClick={(_) => onNewGameClick?.()}
+          >
+            New Game
+          </Key>
+        </div>
       </div>
-      <button
-        type="button"
-        className="xxshort:w-8 m-0.5 h-14 w-full cursor-pointer select-none rounded border border-gray-300 bg-white text-lg font-bold text-black hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700"
-        onClick={() => onClick?.('Backspace')}
-      >
-        X
-      </button>
     </KeyboardBase>
   );
 };

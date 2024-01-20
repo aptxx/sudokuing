@@ -11,15 +11,20 @@ type Props = {
   value?: CellValue;
   notes?: number[];
   chosen?: boolean;
-  highlight?: boolean;
+  chosenRelated?: boolean;
   onClick?: () => void;
 };
 
-export const Cell = ({ value, notes, chosen, highlight, onClick }: Props) => {
+export const Cell = ({ value, notes, chosen, chosenRelated, onClick }: Props) => {
+  const isPrefilled = !!value?.prefilled;
+  const isInvalid = value && value.value != undefined && value.value != value.answer;
+
   const classes = classnames('w-full h-full flex justify-center items-center', {
     'bg-blue-200': chosen,
-    'bg-blue-500': !chosen && highlight,
-    'text-red-500': value && value.value && value.value != value.answer,
+    'bg-blue-50': !chosen && chosenRelated,
+    'text-blue-500': !isInvalid && !isPrefilled,
+    'text-red-500': isInvalid,
+    'border-1 border border-gray-300': !chosen,
   });
 
   let content;

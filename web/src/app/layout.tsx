@@ -42,7 +42,8 @@ export async function generateMetadata(): Promise<Metadata> {
       statusBarStyle: 'default',
     },
     icons: [
-      { rel: 'icon', url: '/favicon.ico' },
+      { rel: 'icon', url: '/favicon.ico', type: 'image/x-icon' },
+      { rel: 'shortcut icon', url: '/favicon.ico', type: 'image/x-icon' },
       { rel: 'apple-touch-icon', url: '/apple-touch-icon.png' },
     ],
   };
@@ -112,10 +113,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
 
       <body className={`${OpenSans.className}`}>
-        <div className="static flex h-16 w-full items-center justify-between bg-white text-black shadow dark:bg-black dark:text-white">
+        <div className="bg-default-color static flex h-16 w-full items-center justify-between text-black shadow dark:bg-black dark:text-white">
           <div className="mx-2 flex items-center justify-between sm:mx-8 md:mx-32">
             <a href={BASE_URL} title={SITE_TITLE} rel="home">
-              <h1 className="text-2xl font-bold tracking-wider no-underline">Sudokuing.com</h1>
+              <h1 className="text-2xl font-bold tracking-wider no-underline">{SITE_TITLE}</h1>
             </a>
           </div>
         </div>
@@ -123,8 +124,42 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </div>
         <footer className="mt-4 w-full bg-gray-800 text-white shadow dark:bg-black dark:text-white">
-          <div className="mx-2 py-2 sm:mx-8 md:mx-32">
-            <span>© {SITE_TITLE}. All Rights Reserved.</span>
+          <div className="mx-2 flex items-center justify-between py-2 sm:mx-8 md:mx-32">
+            <div>
+              <span>© {SITE_TITLE}</span>
+            </div>
+            <div>
+              <span>
+                <a
+                  className="hover:underline"
+                  href={`${BASE_URL}/privacy`}
+                  rel="nofollow"
+                  title="Privacy"
+                >
+                  Privacy
+                </a>
+              </span>
+              <span className="ml-4">
+                <a
+                  className="hover:underline"
+                  href={`${BASE_URL}/terms`}
+                  rel="nofollow"
+                  title="Terms"
+                >
+                  Terms
+                </a>
+              </span>
+              <span className="ml-4">
+                <a
+                  className="hover:underline"
+                  href="mailto:support@sudokuing.com"
+                  rel="nofollow"
+                  title="Contact Us"
+                >
+                  Contact Us
+                </a>
+              </span>
+            </div>
           </div>
         </footer>
       </body>

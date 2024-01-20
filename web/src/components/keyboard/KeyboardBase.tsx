@@ -2,10 +2,11 @@ import { useEffect } from 'react';
 
 type Props = {
   children: React.ReactNode;
+  className?: string;
   onClick?: (value: string) => void;
 };
 
-export const KeyboardBase = ({ children, onClick }: Props) => {
+export const KeyboardBase = ({ children, className, onClick }: Props) => {
   useEffect(() => {
     const listener = (e: KeyboardEvent) => {
       if (e.code === 'Enter') {
@@ -22,5 +23,5 @@ export const KeyboardBase = ({ children, onClick }: Props) => {
     };
   }, [onClick]);
 
-  return <>{children}</>;
+  return <div className={className || ''}>{children}</div>;
 };

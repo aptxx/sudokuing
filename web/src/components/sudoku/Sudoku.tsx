@@ -10,6 +10,7 @@ import { KeyboardHorizontal } from '@/components/keyboard/KeyboardHorizontal';
 import { Keyboard } from '@/components/keyboard/Keyboard';
 import { GameSolvedModal } from '../modals/GameSolvedModal';
 import { GameOverModal } from '../modals/GameOverModal';
+import { NewGameModal } from '../modals/NewGameModal';
 
 enum GameStatus {
   Playing,
@@ -73,6 +74,7 @@ export default function Sudoku({
   const [chosenCell, setChosenCell] = useState(-1);
   const [isGameSolvedModalOpen, setIsGameSolvedModalOpen] = useState(false);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
+  const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
 
   const newGame = (difficulty: Difficulty) => {
     const newPuzzle = generateGame(difficulty);
@@ -163,15 +165,22 @@ export default function Sudoku({
 
   return (
     <>
-      <div className="flex">
-        <Board cells={cells} notes={notes} chosen={chosenCell} onCellClick={handleCellChosen} />
-        <div className="hidden md:block">
-          <KeyboardHorizontal onClick={handleKeyClick} />
+      <div className="flex flex-row justify-center">
+        <div className="w-full max-w-sm sm:w-[512px] sm:max-w-none">
+          <Board cells={cells} notes={notes} chosen={chosenCell} onCellClick={handleCellChosen} />
+        </div>
+        <div className="ml-8 hidden sm:block sm:w-48">
+          <KeyboardHorizontal
+            onClick={handleKeyClick}
+            onNewGameClick={() => setIsNewGameModalOpen(true)}
+          />
         </div>
       </div>
-      <div className="md:hidden">
-        <hr className="my-4 h-px border-0 bg-gray-200 dark:bg-gray-700" />
-        <Keyboard onClick={handleKeyClick} />
+      <div className="flex flex-col items-center justify-center sm:hidden">
+        <div className="w-full max-w-sm">
+          <hr className="my-4 h-px border-0 bg-gray-200 dark:bg-gray-700" />
+          <Keyboard onClick={handleKeyClick} onNewGameClick={() => setIsNewGameModalOpen(true)} />
+        </div>
       </div>
       <GameSolvedModal
         isOpen={isGameSolvedModalOpen}
@@ -187,6 +196,19 @@ export default function Sudoku({
         isOpen={isGameOverModalOpen}
         handleClose={() => {
           setIsGameOverModalOpen(false);
+        }}
+      />
+      <NewGameModal
+        isOpen={isNewGameModalOpen}
+        handleClose={() => {
+          setIsNewGameModalOpen(false);
+        }}
+        handleConfirm={() => {
+          newGame(difficulty);
+          setIsNewGameModalOpen(false);
+        }}
+        handleCancel={() => {
+          setIsNewGameModalOpen(false);
         }}
       />
     </>
