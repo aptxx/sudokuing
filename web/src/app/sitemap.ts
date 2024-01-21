@@ -9,8 +9,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: BASE_URL,
       lastModified: lastModified,
       priority: 1,
-    }
+    },
   ]
+
+  const _ = ['easy','medium', 'hard', 'expert', 'crazy'].map((difficulty) => {
+    map.push({
+      url: `${BASE_URL}/${difficulty}`,
+      lastModified: lastModified,
+      priority: 0.9,
+    })
+  })
 
   return map;
 }

@@ -4,13 +4,13 @@ import classnames from 'classnames';
 type Props = {
   children?: ReactNode;
   className?: string;
-  value: string;
-  onClick: (value: string) => void;
+  value?: string;
+  onClick?: (value: string) => void;
 };
 
-export const Key = ({ children, className, value, onClick }: Props) => {
+export const Key = ({ children, className, value = '', onClick }: Props) => {
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    onClick(value);
+    onClick?.(value);
     event.currentTarget.blur();
   };
 

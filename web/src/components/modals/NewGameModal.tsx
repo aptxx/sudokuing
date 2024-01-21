@@ -11,7 +11,7 @@ export const NewGameModal = ({ isOpen, handleClose, handleConfirm, handleCancel 
   return (
     <BaseModal title="Continue?" isOpen={isOpen} handleClose={handleClose}>
       <p className="text-sm text-gray-500 dark:text-gray-300">
-        You are creating a new game. This action will clean current solution.
+        Creating a new game will clear the puzzle.
       </p>
       <div className="mt-4 flex justify-center">
         <button

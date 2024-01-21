@@ -19,8 +19,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: baseURL,
     title: {
-      default: `${SITE_TITLE} - Sudoku Online`,
-      template: '- Sudokuing | Sudoku Online',
+      default: `${SITE_TITLE} - Sudoku Puzzles | Sudokuing`,
+      template: '%s - Sudoku Puzzles | Sudokuing ',
     },
     keywords: SITE_KEYWORDS,
     description: SITE_DESCRIPTION,
@@ -113,14 +113,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
 
       <body className={`${OpenSans.className}`}>
-        <div className="bg-default-color static flex h-16 w-full items-center justify-between text-black shadow dark:bg-black dark:text-white">
+        <div className="bg-default-color static flex h-14 w-full items-center justify-between text-black shadow dark:bg-black dark:text-white">
           <div className="mx-2 flex items-center justify-between sm:mx-8 md:mx-32">
             <a href={BASE_URL} title={SITE_TITLE} rel="home">
               <h1 className="text-2xl font-bold tracking-wider no-underline">{SITE_TITLE}</h1>
             </a>
           </div>
         </div>
-        <div id="root" className="mx-2 sm:mx-8 md:mx-32">
+        <div id="root" className="mx-2 py-4 sm:mx-8 md:mx-32">
           {children}
         </div>
         <footer className="mt-4 w-full bg-gray-800 text-white shadow dark:bg-black dark:text-white">

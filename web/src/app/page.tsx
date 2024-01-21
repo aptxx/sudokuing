@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { BASE_URL } from '@/config/setting';
 import Sudoku from '@/components/sudoku/Sudoku';
+import { Difficulty, Theme } from '@/constants/constants';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -14,8 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function Home() {
   return (
     <div className="h-full w-full">
-      <div className="my-4"></div>
-      <Sudoku />
+      <Sudoku initDifficulty={Difficulty.Easy} initTheme={Theme.Classic} storagePrefix="" />
     </div>
   );
 }

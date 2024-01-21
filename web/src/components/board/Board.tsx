@@ -1,4 +1,5 @@
 import classnames from 'classnames';
+import { PlayIcon } from '@heroicons/react/20/solid';
 import { Cell, CellValue } from '@/components/board/Cell';
 import Square from '../common/Square';
 
@@ -38,9 +39,11 @@ type Props = {
   notes: { [key: number]: number[] };
   chosen?: number;
   onCellClick?: (position: number) => void;
+  paused?: boolean;
+  onPlayClick?: () => void;
 };
 
-export const Board = ({ cells, notes, chosen, onCellClick }: Props) => {
+export const Board = ({ cells, notes, chosen, onCellClick, paused, onPlayClick }: Props) => {
   const groups = [];
   for (let i = 0; i < 9; i++) {
     const cls = classnames('grid grid-cols-3 grid-rows-3 gap-0 border-solid border-gray-600', {
@@ -57,6 +60,9 @@ export const Board = ({ cells, notes, chosen, onCellClick }: Props) => {
           .fill(0)
           .map((_, j) => {
             const pos = base + j;
+            if (paused) {
+              return <Cell key={pos} />;
+            }
             return (
               <Cell
                 key={pos}
@@ -73,8 +79,15 @@ export const Board = ({ cells, notes, chosen, onCellClick }: Props) => {
   }
   return (
     <Square>
-      <div className="grid h-full w-full grid-cols-3 grid-rows-3 gap-0 rounded border-2 border-solid border-gray-600 text-lg font-medium text-gray-800 sm:text-xl md:text-2xl">
+      <div className="relativ grid h-full w-full grid-cols-3 grid-rows-3 gap-0 rounded border-2 border-solid border-gray-600 text-lg font-medium text-gray-800 sm:text-xl md:text-2xl">
         {groups}
+        {paused && (
+          <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center text-blue-500 opacity-100">
+            <button onClick={() => onPlayClick?.()}>
+              <PlayIcon className="h-12 w-12" />
+            </button>
+          </div>
+        )}
       </div>
     </Square>
   );
