@@ -8,26 +8,26 @@ function isRelated(chosenCell: number, target: number): boolean {
     return false;
   }
 
-  const chosenGroup = Math.floor(chosenCell / 9);
-  const chosenGroupPos = chosenCell % 9;
-  const targetGroup = Math.floor(target / 9);
-  const targetGroupPos = target % 9;
+  const chosenRow = Math.floor(chosenCell / 9);
+  const chosenCol = chosenCell % 9;
+  const targetRow = Math.floor(target / 9);
+  const targetCol = target % 9;
 
   // same group
-  if (chosenGroup === targetGroup) {
-    return true;
-  }
-
-  // same row
   if (
-    Math.floor(chosenGroup / 3) === Math.floor(targetGroup / 3) &&
-    Math.floor(chosenGroupPos / 3) == Math.floor(targetGroupPos / 3)
+    Math.floor(chosenRow / 3) === Math.floor(targetRow / 3) &&
+    Math.floor(chosenCol / 3) === Math.floor(targetCol / 3)
   ) {
     return true;
   }
 
+  // same row
+  if (chosenRow === targetRow) {
+    return true;
+  }
+
   // same col
-  if (chosenGroup % 3 === targetGroup % 3 && chosenGroupPos % 3 == targetGroupPos % 3) {
+  if (chosenCol === targetCol) {
     return true;
   }
 
@@ -44,43 +44,47 @@ type Props = {
 };
 
 export const Board = ({ cells, notes, chosen, onCellClick, paused, onPlayClick }: Props) => {
-  const groups = [];
-  for (let i = 0; i < 9; i++) {
-    const cls = classnames('grid grid-cols-3 grid-rows-3 gap-0 border-solid border-gray-600', {
-      'border-t': i > 2,
-      'border-b': i < 6,
-      'border-l': i % 3 != 0, // 0 ,3, 6
-      'border-r': i % 3 != 2, // 2 ,5, 8
+  const chosenCell = chosen || -1;
+  const elems = Array(81)
+    .fill(0)
+    .map((_, i) => {
+      const value = cells[i];
+      const isChosen = chosen === i;
+      const isChosenRelated = isRelated(chosenCell, i);
+      const isPrefilled = !!value?.prefilled;
+      const isInvalid = value && value.value != undefined && value.value != value.answer;
+
+      const row = Math.floor(i / 9);
+      const col = i % 9;
+      const classes = classnames('border border-gray-300 border-solid', {
+        'border-t-gray-600': row % 3 === 0,
+        'border-b-gray-600': (row + 1) % 3 === 0,
+        'border-l-gray-600': col % 3 === 0,
+        'border-r-gray-600': (col + 1) % 3 === 0,
+        'bg-blue-200': isChosen,
+        'bg-blue-50': !isChosen && isChosenRelated,
+        'text-blue-500': !isInvalid && !isPrefilled,
+        'text-red-500': isInvalid,
+      });
+      if (paused) {
+        return <Cell className={classes} key={i} />;
+      }
+      return (
+        <Cell
+          className={classes}
+          key={i}
+          value={cells[i]}
+          notes={notes[i]}
+          onClick={() => onCellClick?.(i)}
+        />
+      );
     });
-    const base = i * 9;
-    const chosenCell = chosen || -1;
-    groups.push(
-      <div key={`board-group-${i}`} className={cls}>
-        {Array(9)
-          .fill(0)
-          .map((_, j) => {
-            const pos = base + j;
-            if (paused) {
-              return <Cell key={pos} />;
-            }
-            return (
-              <Cell
-                key={pos}
-                value={cells[pos]}
-                notes={notes[pos]}
-                chosen={chosenCell === pos}
-                chosenRelated={isRelated(chosenCell, pos)}
-                onClick={() => onCellClick?.(pos)}
-              />
-            );
-          })}
-      </div>
-    );
-  }
   return (
     <Square>
-      <div className="relativ grid h-full w-full grid-cols-3 grid-rows-3 gap-0 rounded border-2 border-solid border-gray-600 text-lg font-medium text-gray-800 sm:text-xl md:text-2xl">
-        {groups}
+      <div className="relativ grid h-full w-full rounded border-2 border-solid border-gray-600 text-lg font-medium text-gray-800 sm:text-xl md:text-2xl">
+        <div className="grid-rows-9 grid grid-cols-9 gap-0 border-solid border-gray-600">
+          {elems}
+        </div>
         {paused && (
           <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center text-blue-500 opacity-100">
             <button onClick={() => onPlayClick?.()}>
