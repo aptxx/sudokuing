@@ -20,10 +20,10 @@ export const Keyboard = ({ onClick, onNewGameClick }: Props) => {
       <div className="flex w-full flex-col justify-center">
         <div className="flex items-center justify-around">
           {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((key) => (
-            <div key={key} className="basis-1/12">
+            <div key={key} className="mx-0.5 flex-auto">
               <Square>
                 <Key
-                  className="h-full w-full bg-gray-50 hover:bg-gray-100"
+                  className="h-full w-full bg-gray-50 text-2xl hover:bg-gray-100"
                   key={key}
                   value={key}
                   onClick={onValueClick}
