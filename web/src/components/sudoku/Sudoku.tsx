@@ -13,6 +13,7 @@ import { GameSolvedModal } from '../modals/GameSolvedModal';
 import { GameOverModal } from '../modals/GameOverModal';
 import { NewGameModal } from '../modals/NewGameModal';
 import DifficultySelect from './DifficultySelect';
+import { deprecate } from 'util';
 
 enum GameStatus {
   Playing,
@@ -26,6 +27,7 @@ type GameState = {
   cells: { [key: number]: CellValue };
   notes: { [key: number]: number[] };
   difficulty: Difficulty;
+  deprecated: number;
 };
 
 function loadGame(prefix: string): null | GameState {
@@ -52,13 +54,6 @@ function formatPlaytime(n: number) {
   const minutes = Math.floor(n / 60);
   const seconds = n % 60;
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
-function generateGameLink(theme: Theme, difficulty: Difficulty) {
-  if (theme === Theme.Classic) {
-    return `/${difficulty}`;
-  }
-  return `/${theme}/${difficulty}`;
 }
 
 function generateGame(difficulty: Difficulty): string {
@@ -96,6 +91,7 @@ export default function Sudoku({
   const [cells, setCells] = useState({} as { [key: number]: CellValue });
   const [notes, setNotes] = useState({} as { [key: number]: number[] });
   const [difficulty, setDifficulty] = useState(initDifficulty);
+  const [deprecated, setDeprecated] = useState(0);
   const [chosenCell, setChosenCell] = useState(-1);
   const [playtimeIntervalId, setPlaytimeIntervalId] = useState<any>(null);
   const [playtime, setPlaytime] = useState(0); // seconds
@@ -149,7 +145,7 @@ export default function Sudoku({
     );
 
     const gameState = loadGame(storagePrefix);
-    if (gameState) {
+    if (gameState && !gameState.deprecated) {
       try {
         setPuzzle(gameState.puzzle);
         setCells(gameState.cells);
@@ -179,8 +175,8 @@ export default function Sudoku({
   }, [isDarkMode]);
 
   useEffect(() => {
-    saveGame({ puzzle, cells, notes, difficulty }, storagePrefix);
-  }, [storagePrefix, puzzle, cells, notes, difficulty]);
+    saveGame({ puzzle, cells, notes, difficulty, deprecated }, storagePrefix);
+  }, [storagePrefix, puzzle, cells, notes, difficulty, deprecated]);
 
   useEffect(() => {
     savePlaytime(playtime, storagePrefix);
@@ -242,26 +238,27 @@ export default function Sudoku({
       if (newDifficulty === difficulty) {
         return;
       }
-      newGame(newDifficulty);
-      window.location.href = generateGameLink(theme, newDifficulty);
+      setDeprecated(1);
     },
-    [newGame, difficulty]
+    [difficulty]
   );
 
   return (
     <>
-      <div className="flex items-center justify-start text-base font-bold text-gray-600 sm:text-lg">
-        <DifficultySelect theme={theme} current={difficulty} onClick={handleDifficultyClick} />
-      </div>
       <div className="flex items-center justify-center font-medium text-gray-500">
-        <span>{formatPlaytime(playtime)}</span>
-        <button className="ml-1" onClick={togglePauseClick}>
-          {status === GameStatus.Paused ? (
-            <PlayIcon className="h-4 w-4" />
-          ) : (
-            <PauseIcon className="h-4 w-4" />
-          )}
-        </button>
+        <div className="text-base font-bold text-gray-600 sm:text-lg">
+          <DifficultySelect theme={theme} current={difficulty} onClick={handleDifficultyClick} />
+        </div>
+        <div className="ml-4 flex items-center justify-center">
+          <span>{formatPlaytime(playtime)}</span>
+          <button className="ml-1" onClick={togglePauseClick}>
+            {status === GameStatus.Paused ? (
+              <PlayIcon className="h-4 w-4" />
+            ) : (
+              <PauseIcon className="h-4 w-4" />
+            )}
+          </button>
+        </div>
       </div>
       <div className="mt-2 flex flex-row justify-center">
         <div className="w-full max-w-sm sm:w-[512px] sm:max-w-none">
@@ -271,7 +268,7 @@ export default function Sudoku({
             chosen={chosenCell}
             onCellClick={handleCellChosen}
             paused={status === GameStatus.Paused}
-            onPlayClick={togglePauseClick}
+            onResumeClick={togglePauseClick}
           />
         </div>
         <div className="ml-8 hidden sm:block sm:w-48">

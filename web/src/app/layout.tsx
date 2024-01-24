@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: baseURL.host, url: BASE_URL }],
     viewport: 'width=device-width, initial-scale=1',
     robots: 'index',
-    themeColor: '#000000',
+    themeColor: '#FAFAFA',
     manifest: '/manifest.json',
     openGraph: {
       type: 'website',
@@ -113,17 +113,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
 
       <body className={`${OpenSans.className}`}>
-        <div className="bg-default-color static flex h-14 w-full items-center justify-between text-black shadow dark:bg-black dark:text-white">
+        <div className="static flex h-14 w-full items-center justify-between bg-default-color text-black shadow dark:bg-black dark:text-white">
           <div className="mx-2 flex items-center justify-between sm:mx-8 md:mx-32">
             <a href={BASE_URL} title={SITE_TITLE} rel="home">
-              <h1 className="text-2xl font-bold tracking-wider no-underline">{SITE_TITLE}</h1>
+              <h1 className="text-xl font-bold tracking-wider text-gray-800 no-underline sm:text-2xl">
+                {SITE_TITLE}
+              </h1>
             </a>
           </div>
         </div>
         <div id="root" className="mx-2 py-4 sm:mx-8 md:mx-32">
           {children}
         </div>
-        <footer className="mt-4 w-full bg-gray-800 text-white shadow dark:bg-black dark:text-white">
+        <footer className="mt-4 w-full bg-gray-800 text-gray-200 shadow dark:bg-black dark:text-white">
           <div className="mx-2 flex items-center justify-between py-2 sm:mx-8 md:mx-32">
             <div>
               <span>© {SITE_TITLE}</span>

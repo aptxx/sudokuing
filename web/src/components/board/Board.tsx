@@ -40,10 +40,10 @@ type Props = {
   chosen?: number;
   onCellClick?: (position: number) => void;
   paused?: boolean;
-  onPlayClick?: () => void;
+  onResumeClick?: () => void;
 };
 
-export const Board = ({ cells, notes, chosen, onCellClick, paused, onPlayClick }: Props) => {
+export const Board = ({ cells, notes, chosen, onCellClick, paused, onResumeClick }: Props) => {
   const chosenCell = chosen || -1;
   const elems = Array(81)
     .fill(0)
@@ -87,8 +87,8 @@ export const Board = ({ cells, notes, chosen, onCellClick, paused, onPlayClick }
         </div>
         {paused && (
           <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center text-blue-500 opacity-100">
-            <button onClick={() => onPlayClick?.()}>
-              <PlayIcon className="h-12 w-12" />
+            <button onClick={() => onResumeClick?.()}>
+              <PlayIcon className="h-16 w-16" />
             </button>
           </div>
         )}
