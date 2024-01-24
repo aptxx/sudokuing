@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import { CellNote } from './CellNote';
+import Square from '../common/Square';
 
 export type CellValue = {
   value: number; // user input
@@ -25,8 +26,10 @@ export const Cell = ({ className, value, notes, onClick }: Props) => {
   }
 
   return (
-    <div className={classes} onClick={onClick}>
-      {content}
-    </div>
+    <Square>
+      <div className={classes} onClick={onClick}>
+        {content}
+      </div>
+    </Square>
   );
 };
