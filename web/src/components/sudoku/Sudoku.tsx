@@ -261,7 +261,7 @@ export default function Sudoku({
         </div>
       </div>
       <div className="mt-2 flex flex-row justify-center">
-        <div className="w-full max-w-sm sm:w-[512px] sm:max-w-none">
+        <div className="w-full max-w-sm sm:w-[404px] sm:max-w-none">
           <Board
             cells={cells}
             notes={notes}

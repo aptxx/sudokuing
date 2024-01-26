@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: baseURL.host, url: BASE_URL }],
     viewport: 'width=device-width, initial-scale=1',
     robots: 'index',
-    themeColor: '#FAFAFA',
+    themeColor: '#FFFFFF',
     manifest: '/manifest.json',
     openGraph: {
       type: 'website',
@@ -113,8 +113,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
 
       <body className={`${OpenSans.className}`}>
-        <div className="static flex h-14 w-full items-center justify-between bg-default-color text-black shadow dark:bg-black dark:text-white">
-          <div className="mx-2 flex items-center justify-between sm:mx-8 md:mx-32">
+        <div className="static mb-8 flex h-14 w-full items-center justify-between bg-default-color text-black shadow dark:bg-black dark:text-white">
+          <div className="x-container flex items-center justify-between">
             <a href={BASE_URL} title={SITE_TITLE} rel="home">
               <h1 className="text-xl font-bold tracking-wider text-gray-800 no-underline sm:text-2xl">
                 {SITE_TITLE}
@@ -122,10 +122,34 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </a>
           </div>
         </div>
-        <div id="root" className="mx-2 py-4 sm:mx-8 md:mx-32">
-          {children}
+        <div id="root">{children}</div>
+        <div className="x-container post-block mb-12">
+          <h2>About Sudoku</h2>
+          <p>
+            <a
+              className="text-blue-600 hover:underline"
+              href="https://en.wikipedia.org/wiki/Sudoku"
+              rel="nofollow"
+              title="Sudoku"
+              target="_blank"
+            >
+              Sudoku
+            </a>{' '}
+            is a logic-based, combinatorial number-placement puzzle. In classic Sudoku, the
+            objective is to fill a 9 x 9 grid with digits so that each column, each row, and each of
+            the nine 3 x 3 subgrids that compose the grid contains all of the digits from 1 to 9.
+            The puzzle setter provides a partially completed grid, which for a well-posed puzzle has
+            a single solution.
+          </p>
         </div>
-        <footer className="mt-4 w-full bg-gray-800 text-gray-200 shadow dark:bg-black dark:text-white">
+        <div className="x-container post-block mb-12">
+          <h2>About {SITE_TITLE}</h2>
+          <p>
+            <b>Sudokuing (Sudoku'ing)</b> is an online Sudoku gaming website that focuses on
+            providing a user-friendly, variety of themed Sudoku puzzles for everyone to enjoy.
+          </p>
+        </div>
+        <footer className="mt-4 w-full bg-gray-800 text-xs text-gray-200 shadow dark:bg-black dark:text-white">
           <div className="mx-2 flex items-center justify-between py-2 sm:mx-8 md:mx-32">
             <div>
               <span>© {SITE_TITLE}</span>

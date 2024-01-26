@@ -81,8 +81,8 @@ export const Board = ({ cells, notes, chosen, onCellClick, paused, onResumeClick
     });
   return (
     <Square>
-      <div className="relative grid h-full w-full text-lg font-medium text-gray-800 sm:text-xl md:text-2xl">
-        <div className="grid-rows-9 grid grid-cols-9 gap-0 rounded border-2 border-solid border-gray-600">
+      <div className="relative grid h-full w-full text-2xl font-normal text-gray-700">
+        <div className="grid-rows-9 grid grid-cols-9 gap-0 rounded border border-solid border-gray-600">
           {elems}
         </div>
         {paused && (

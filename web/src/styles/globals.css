@@ -2,9 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .x-container {
+    @apply mx-2 sm:mx-8 md:mx-32;
+  }
+
+  .post-block h1,
+  .post-block h2,
+  .post-block h3,
+  .post-block h4,
+  .post-block h5 {
+    @apply text-xl font-bold text-gray-800 sm:text-2xl;
+  }
+
+  .post-block p {
+    @apply mt-4 text-sm text-gray-500;
+  }
+
+  .post-block ul {
+    @apply list-inside list-disc rounded-lg bg-gray-100 p-4 text-sm text-gray-500;
+  }
+
+  .post-block li {
+    @apply my-2;
+  }
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-rgb: 250, 250, 250;
+  --background-rgb: 255, 255, 255;
 }
 
 html {
