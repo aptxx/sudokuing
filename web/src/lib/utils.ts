@@ -1,4 +1,24 @@
 import { CellValue } from "@/components/board/Cell";
+import { Difficulty } from "@/constants/constants";
+import sudoku from "./sudoku";
+
+
+export function generatePuzzle(difficulty: Difficulty): string {
+  switch (difficulty) {
+    case Difficulty.Easy:
+      return sudoku.generate(56);
+    case Difficulty.Medium:
+      return sudoku.generate(45);
+    case Difficulty.Hard:
+      return sudoku.generate('very-hard');
+    case Difficulty.Expert:
+      return sudoku.generate('insane');
+    case Difficulty.Crazy:
+      return sudoku.generate('inhuman');
+    default:
+      return sudoku.generate(56);
+  }
+}
 
 
 export function puzzleToCells(puzzle: string, solved: string): {[key:number]: CellValue} {

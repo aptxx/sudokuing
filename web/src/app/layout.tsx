@@ -113,7 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
 
       <body className={`${OpenSans.className}`}>
-        <div className="static mb-8 flex h-14 w-full items-center justify-between bg-default-color text-black shadow dark:bg-black dark:text-white">
+        <div className="static flex h-14 w-full items-center justify-between bg-default-color text-black shadow dark:bg-black dark:text-white">
           <div className="x-container flex items-center justify-between">
             <a href={BASE_URL} title={SITE_TITLE} rel="home">
               <h1 className="text-xl font-bold tracking-wider text-gray-800 no-underline sm:text-2xl">
@@ -122,7 +122,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </a>
           </div>
         </div>
-        <div id="root">{children}</div>
+        <div id="root" className="mt-8">
+          {children}
+        </div>
         <div className="x-container post-block mb-12">
           <h2>About Sudoku</h2>
           <p>

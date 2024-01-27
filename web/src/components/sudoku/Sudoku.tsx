@@ -3,9 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PlayIcon, PauseIcon } from '@heroicons/react/20/solid';
 import sudoku from '@/lib/sudoku';
-import { Difficulty, Theme } from '@/constants/constants';
+import { Difficulty, Theme, GameStatus } from '@/constants/constants';
 import { Board } from '@/components/board/Board';
-import { puzzleToCells } from '@/lib/utils';
+import { generatePuzzle, puzzleToCells } from '@/lib/utils';
 import { CellValue } from '@/components/board/Cell';
 import { KeyboardHorizontal } from '@/components/keyboard/KeyboardHorizontal';
 import { Keyboard } from '@/components/keyboard/Keyboard';
@@ -13,14 +13,6 @@ import { GameSolvedModal } from '../modals/GameSolvedModal';
 import { GameOverModal } from '../modals/GameOverModal';
 import { NewGameModal } from '../modals/NewGameModal';
 import DifficultySelect from './DifficultySelect';
-import { deprecate } from 'util';
-
-enum GameStatus {
-  Playing,
-  Paused,
-  GameOver,
-  GameSolved,
-}
 
 type GameState = {
   puzzle: string;
@@ -28,6 +20,7 @@ type GameState = {
   notes: { [key: number]: number[] };
   difficulty: Difficulty;
   deprecated: number;
+  mistakes: number;
 };
 
 function loadGame(prefix: string): null | GameState {
@@ -38,7 +31,7 @@ function loadGame(prefix: string): null | GameState {
   return JSON.parse(data);
 }
 
-function saveGame(state: GameState, prefix: string) {
+function saveGame(prefix: string, state: GameState) {
   localStorage.setItem(`${prefix || ''}game`, JSON.stringify(state));
 }
 
@@ -54,23 +47,6 @@ function formatPlaytime(n: number) {
   const minutes = Math.floor(n / 60);
   const seconds = n % 60;
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
-function generateGame(difficulty: Difficulty): string {
-  switch (difficulty) {
-    case Difficulty.Easy:
-      return sudoku.generate('medium');
-    case Difficulty.Medium:
-      return sudoku.generate('hard');
-    case Difficulty.Hard:
-      return sudoku.generate('very-hard');
-    case Difficulty.Expert:
-      return sudoku.generate('insane');
-    case Difficulty.Crazy:
-      return sudoku.generate('inhuman');
-    default:
-      return sudoku.generate('medium');
-  }
 }
 
 type Props = {
@@ -95,6 +71,7 @@ export default function Sudoku({
   const [chosenCell, setChosenCell] = useState(-1);
   const [playtimeIntervalId, setPlaytimeIntervalId] = useState<any>(null);
   const [playtime, setPlaytime] = useState(0); // seconds
+  const [mistakes, setMistakes] = useState(0);
   const [isGameSolvedModalOpen, setIsGameSolvedModalOpen] = useState(false);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
@@ -105,13 +82,15 @@ export default function Sudoku({
   }, [playtimeIntervalId, setPlaytimeIntervalId]);
 
   const newGame = (difficulty: Difficulty) => {
-    const newPuzzle = generateGame(difficulty);
+    const newPuzzle = generatePuzzle(difficulty);
     const newPuzzleSolved = sudoku.solve(newPuzzle) || '';
     setPuzzle(newPuzzle);
     setCells(puzzleToCells(newPuzzle, newPuzzleSolved));
     setNotes({});
     setDifficulty(difficulty);
+    cleanPlaytimeInterval();
     setPlaytime(0);
+    setMistakes(0);
   };
 
   // watch game status to update timer
@@ -151,6 +130,8 @@ export default function Sudoku({
         setCells(gameState.cells);
         setNotes(gameState.notes);
         setDifficulty(gameState.difficulty);
+        setPlaytime(loadPlaytime(storagePrefix));
+        setMistakes(gameState.mistakes);
       } catch (e) {
         console.log(`load game state failed: ${e}`);
         newGame(difficulty);
@@ -158,8 +139,6 @@ export default function Sudoku({
     } else {
       newGame(difficulty);
     }
-
-    setPlaytime(loadPlaytime(storagePrefix));
 
     return () => {
       cleanPlaytimeInterval();
@@ -175,8 +154,8 @@ export default function Sudoku({
   }, [isDarkMode]);
 
   useEffect(() => {
-    saveGame({ puzzle, cells, notes, difficulty, deprecated }, storagePrefix);
-  }, [storagePrefix, puzzle, cells, notes, difficulty, deprecated]);
+    saveGame(storagePrefix, { puzzle, cells, notes, difficulty, deprecated, mistakes });
+  }, [storagePrefix, puzzle, cells, notes, difficulty, deprecated, mistakes]);
 
   useEffect(() => {
     savePlaytime(playtime, storagePrefix);
@@ -219,7 +198,11 @@ export default function Sudoku({
         if (value === 'Backspace') {
           newChosenCell.value = 0;
         } else if (value.length === 1 && value >= '1' && value <= '9') {
-          newChosenCell.value = Number(value);
+          const newValue = Number(value);
+          newChosenCell.value = newValue;
+          if (newChosenCell.value !== newChosenCell.answer) {
+            setMistakes((v) => v + 1);
+          }
         }
 
         newCells[chosenCell] = newChosenCell;
@@ -249,6 +232,7 @@ export default function Sudoku({
         <div className="text-base font-bold text-gray-600 sm:text-lg">
           <DifficultySelect theme={theme} current={difficulty} onClick={handleDifficultyClick} />
         </div>
+        <div className="ml-4">Mistakes: {`${mistakes}`}</div>
         <div className="ml-4 flex items-center justify-center">
           <span>{formatPlaytime(playtime)}</span>
           <button className="ml-1" onClick={togglePauseClick}>
@@ -266,8 +250,8 @@ export default function Sudoku({
             cells={cells}
             notes={notes}
             chosen={chosenCell}
+            status={status}
             onCellClick={handleCellChosen}
-            paused={status === GameStatus.Paused}
             onResumeClick={togglePauseClick}
           />
         </div>

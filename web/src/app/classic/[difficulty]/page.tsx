@@ -16,7 +16,7 @@ export async function generateMetadata(
   return generateBaseMetadata(Theme.Classic, params.difficulty as Difficulty);
 }
 
-export default function Home({ params, searchParams }: Props) {
+export default function Page({ params, searchParams }: Props) {
   const theme = Theme.Classic;
   const difficulty = params.difficulty as Difficulty;
   const jsonLd = generateBaseMetadata(theme, difficulty);

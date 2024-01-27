@@ -2,6 +2,7 @@ import classnames from 'classnames';
 import { PlayIcon } from '@heroicons/react/20/solid';
 import { Cell, CellValue } from '@/components/board/Cell';
 import Square from '../common/Square';
+import { GameStatus } from '@/constants/constants';
 
 function isRelated(chosenCell: number, target: number): boolean {
   if (chosenCell < 0 || chosenCell === undefined || chosenCell === target) {
@@ -38,12 +39,12 @@ type Props = {
   cells: { [key: number]: CellValue };
   notes: { [key: number]: number[] };
   chosen?: number;
+  status?: GameStatus;
   onCellClick?: (position: number) => void;
-  paused?: boolean;
   onResumeClick?: () => void;
 };
 
-export const Board = ({ cells, notes, chosen, onCellClick, paused, onResumeClick }: Props) => {
+export const Board = ({ cells, notes, chosen, status, onCellClick, onResumeClick }: Props) => {
   const chosenCell = chosen || -1;
   const elems = Array(81)
     .fill(0)
@@ -66,7 +67,7 @@ export const Board = ({ cells, notes, chosen, onCellClick, paused, onResumeClick
         'text-blue-500': !isInvalid && !isPrefilled,
         'text-red-500': isInvalid,
       });
-      if (paused) {
+      if (status == GameStatus.Paused) {
         return <Cell className={classes} key={i} />;
       }
       return (
@@ -85,7 +86,7 @@ export const Board = ({ cells, notes, chosen, onCellClick, paused, onResumeClick
         <div className="grid-rows-9 grid grid-cols-9 gap-0 rounded border border-solid border-gray-600">
           {elems}
         </div>
-        {paused && (
+        {status == GameStatus.Paused && (
           <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center text-blue-500 opacity-100">
             <button onClick={() => onResumeClick?.()}>
               <PlayIcon className="h-16 w-16" />

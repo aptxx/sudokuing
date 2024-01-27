@@ -11,3 +11,10 @@ export enum Difficulty {
   Expert ='expert',
   Crazy = 'crazy'
 }
+
+export enum GameStatus {
+  Playing,
+  Paused,
+  GameOver,
+  GameSolved,
+}
