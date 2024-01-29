@@ -75,6 +75,7 @@ export const Board = ({
         <Cell
           key={i}
           className={classes}
+          status={status}
           themed={themed}
           value={cells[i]}
           notes={notes[i]}

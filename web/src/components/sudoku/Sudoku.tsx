@@ -90,6 +90,8 @@ export default function Sudoku({
     clearPlaytimeInterval();
     setPlaytime(0);
     setMistakes(0);
+    setChosenCell(-1);
+    setStatus(GameStatus.Playing);
   };
 
   // watch game status to update timer
@@ -199,7 +201,11 @@ export default function Sudoku({
   );
 
   const togglePauseClick = useCallback(() => {
-    setStatus(status === GameStatus.Paused ? GameStatus.Playing : GameStatus.Paused);
+    if (status === GameStatus.Paused) {
+      setStatus(GameStatus.Playing);
+    } else if (status === GameStatus.Playing) {
+      setStatus(GameStatus.Paused);
+    }
   }, [status]);
 
   const handleDifficultyClick = useCallback(
