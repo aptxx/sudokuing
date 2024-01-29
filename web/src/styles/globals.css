@@ -19,6 +19,10 @@
     @apply mt-4 text-sm text-gray-500;
   }
 
+  .post-block .post-content {
+    @apply mt-4 text-sm text-gray-500;
+  }
+
   .post-block ul {
     @apply list-inside list-disc rounded-lg bg-gray-100 p-4 text-sm text-gray-500;
   }

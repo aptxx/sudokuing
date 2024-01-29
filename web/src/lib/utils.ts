@@ -1,5 +1,4 @@
-import { CellValue } from "@/components/board/Cell";
-import { Difficulty } from "@/constants/constants";
+import { Difficulty, CellValue } from "@/components/sudoku/types";
 import sudoku from "./sudoku";
 
 

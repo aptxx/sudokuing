@@ -1,13 +1,15 @@
 import { KeyboardBase } from './KeyboardBase';
 import { Key } from './Key';
 import Square from '../common/Square';
+import { ElementStatus, Themed } from '../sudoku/types';
 
 type Props = {
+  themed: Themed;
   onClick: (value: string) => void;
   onNewGameClick?: () => void;
 };
 
-export const KeyboardHorizontal = ({ onClick, onNewGameClick }: Props) => {
+export const KeyboardHorizontal = ({ themed, onClick, onNewGameClick }: Props) => {
   const onValueClick = (value: string) => {
     onClick?.(value);
   };
@@ -26,7 +28,9 @@ export const KeyboardHorizontal = ({ onClick, onNewGameClick }: Props) => {
                 key={key}
                 value={key}
                 onClick={onValueClick}
-              />
+              >
+                {themed.getElement(Number(key), ElementStatus.Normal)}
+              </Key>
             </Square>
           ))}
         </div>

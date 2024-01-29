@@ -3,6 +3,8 @@ import { Difficulty, Theme } from '@/components/sudoku/types';
 import { generateBaseMetadata } from '@/lib/seo';
 import { capitalize } from '@/lib/utils';
 import { Metadata, ResolvingMetadata } from 'next';
+import themeconfig from './themeconfig';
+import ElementsLine from '@/components/common/ElementsLine';
 
 type Props = {
   params: { difficulty: string };
@@ -13,11 +15,11 @@ export async function generateMetadata(
   { params, searchParams }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  return generateBaseMetadata(Theme.Classic, params.difficulty as Difficulty);
+  return generateBaseMetadata(Theme.Alphabet, params.difficulty as Difficulty);
 }
 
 export default function Page({ params, searchParams }: Props) {
-  const theme = Theme.Classic;
+  const theme = Theme.Alphabet;
   const difficulty = params.difficulty as Difficulty;
   const jsonLd = generateBaseMetadata(theme, difficulty);
 
@@ -29,30 +31,30 @@ export default function Page({ params, searchParams }: Props) {
       />
 
       <div className="x-container mb-12">
-        <Sudoku initTheme={theme} initDifficulty={difficulty} storagePrefix={''} />
+        <Sudoku initTheme={theme} initDifficulty={difficulty} storagePrefix={`${theme}_`} />
       </div>
 
       <div className="x-container post-block mb-12">
         <h2>{capitalize(theme)} Sudoku</h2>
-        <p>
-          You are playing {difficulty} {theme} Sudoku. {capitalize(theme)} Sudoku is one of the most
-          popular theme and appeared in the 20th century. The basic elements are 1 to 9, your goal
-          is to fill the 9x9 grid with the basic elements.
-        </p>
+        <div className="post-content">
+          You are playing {difficulty} {theme} Sudoku. The basic elements are{' '}
+          <ElementsLine elements={themeconfig.getElements()} />, your goal is to fill the 9x9 grid
+          with the basic elements.
+        </div>
       </div>
       <div className="x-container post-block mb-12">
         <h2>How to play {theme} Sudoku</h2>
         <div>
           <p className="mb-2">
             The game board consists of a 9x9 grid, divided into 9 smaller 3x3 squares. The game goal
-            is to fill each square with numbers from 1 to 9, ensuring that every row, column, and
-            small square contains each number exactly once.
+            is to fill each square with basic elements, ensuring that every row, column, and small
+            square contains each element exactly once.
           </p>
           <ul>
             <li>Fill in the remaining empty squares.</li>
-            <li>Fill each 3x3 square with the numbers 1 to 9.</li>
+            <li>Fill each 3x3 square with the basic elements of {theme}.</li>
             <li>
-              Each row, column, and 3x3 box must contain the numbers 1 to 9, with no repetitions.
+              Each row, column, and 3x3 box must contain the basic elements, with no repetitions.
             </li>
           </ul>
         </div>
@@ -67,21 +69,21 @@ export default function Page({ params, searchParams }: Props) {
           </p>
           <ul>
             <li>
-              Look for squares that have only one possible number based on the existing numbers in
+              Look for squares that have only one possible element based on the existing elements in
               their row, column, and 3x3 box. These "unique candidates" can be filled in
               immediately, providing valuable clues for the rest of the puzzle.
             </li>
             <li>
-              Use logical deduction to eliminate possibilities. Look for numbers that are already
+              Use logical deduction to eliminate possibilities. Look for elements that are already
               present in a row, column, or 3x3 box, and eliminate them as options for other empty
               squares within that unit. Repeat this process until you've narrowed down the
               possibilities.
             </li>
             <li>
               When you reach a point where no obvious moves can be made, try making an educated
-              guess by selecting a square with two or three potential numbers. Follow the
+              guess by selecting a square with two or three potential elements. Follow the
               consequences of each choice, keeping track of any contradictions that arise. If you
-              encounter a contradiction, backtrack and try the alternative number(s) for that
+              encounter a contradiction, backtrack and try the alternative element(s) for that
               square.
             </li>
           </ul>

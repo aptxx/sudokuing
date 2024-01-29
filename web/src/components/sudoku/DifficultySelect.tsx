@@ -1,7 +1,7 @@
 import { Popover } from '@headlessui/react';
 import classnames from 'classnames';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import { Difficulty, Theme } from '@/constants/constants';
+import { Difficulty, Theme } from '@/components/sudoku/types';
 import { capitalize } from '@/lib/utils';
 import { SITE_TITLE } from '@/config/setting';
 

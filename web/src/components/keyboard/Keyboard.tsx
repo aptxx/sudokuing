@@ -1,13 +1,15 @@
 import { KeyboardBase } from './KeyboardBase';
 import { Key } from './Key';
 import Square from '../common/Square';
+import { ElementStatus, Themed } from '../sudoku/types';
 
 type Props = {
+  themed: Themed;
   onClick: (value: string) => void;
   onNewGameClick?: () => void;
 };
 
-export const Keyboard = ({ onClick, onNewGameClick }: Props) => {
+export const Keyboard = ({ themed, onClick, onNewGameClick }: Props) => {
   const onValueClick = (value: string) => {
     onClick?.(value);
   };
@@ -24,10 +26,11 @@ export const Keyboard = ({ onClick, onNewGameClick }: Props) => {
               <Square>
                 <Key
                   className="h-full w-full bg-gray-50 text-2xl hover:bg-gray-100"
-                  key={key}
                   value={key}
                   onClick={onValueClick}
-                />
+                >
+                  {themed.getElement(Number(key), ElementStatus.Normal)}
+                </Key>
               </Square>
             </div>
           ))}
@@ -35,7 +38,6 @@ export const Keyboard = ({ onClick, onNewGameClick }: Props) => {
         <div className="mt-2 flex items-center justify-around text-base">
           <Key
             className="h-10 w-full bg-gray-50 text-gray-600 hover:bg-gray-100"
-            key={'Delete'}
             value={'Backspace'}
             onClick={onValueClick}
           >

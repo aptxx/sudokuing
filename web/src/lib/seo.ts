@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Difficulty, Theme } from "@/constants/constants";
+import { Difficulty, Theme } from "@/components/sudoku/types";
 import { capitalize } from "./utils";
 import { BASE_URL, SITE_DESCRIPTION, SITE_KEYWORDS } from "@/config/setting";
 

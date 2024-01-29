@@ -1,47 +1,21 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PlayIcon, PauseIcon } from '@heroicons/react/20/solid';
 import sudoku from '@/lib/sudoku';
-import { Difficulty, Theme, GameStatus } from '@/constants/constants';
+import { Difficulty, Theme, GameStatus, CellValue } from './types';
 import { Board } from '@/components/board/Board';
 import { generatePuzzle, puzzleToCells } from '@/lib/utils';
-import { CellValue } from '@/components/board/Cell';
 import { KeyboardHorizontal } from '@/components/keyboard/KeyboardHorizontal';
 import { Keyboard } from '@/components/keyboard/Keyboard';
-import { GameSolvedModal } from '../modals/GameSolvedModal';
-import { GameOverModal } from '../modals/GameOverModal';
-import { NewGameModal } from '../modals/NewGameModal';
+import { GameSolvedModal } from '@/components/modals/GameSolvedModal';
+import { GameOverModal } from '@/components/modals/GameOverModal';
+import { NewGameModal } from '@/components/modals/NewGameModal';
 import DifficultySelect from './DifficultySelect';
-
-type GameState = {
-  puzzle: string;
-  cells: { [key: number]: CellValue };
-  notes: { [key: number]: number[] };
-  difficulty: Difficulty;
-  deprecated: number;
-  mistakes: number;
-};
-
-function loadGame(prefix: string): null | GameState {
-  const data = localStorage.getItem(`${prefix || ''}game`);
-  if (!data) {
-    return null;
-  }
-  return JSON.parse(data);
-}
-
-function saveGame(prefix: string, state: GameState) {
-  localStorage.setItem(`${prefix || ''}game`, JSON.stringify(state));
-}
-
-function loadPlaytime(prefix: string): number {
-  return +(localStorage.getItem(`${prefix || ''}playtime`) || '') || 0;
-}
-
-function savePlaytime(playtime: number, prefix: string) {
-  localStorage.setItem(`${prefix || ''}playtime`, playtime.toString());
-}
+import { loadGame, loadPlaytime, saveGame, savePlaytime } from './storage';
+import themeClassic from '@/app/classic/[difficulty]/themeconfig';
+import themeAlphabet from '@/app/alphabet/[difficulty]/themeconfig';
+import themeColor from '@/app/color/[difficulty]/themeconfig';
 
 function formatPlaytime(n: number) {
   const minutes = Math.floor(n / 60);
@@ -49,8 +23,19 @@ function formatPlaytime(n: number) {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
+function getThemed(theme: Theme) {
+  if (theme === Theme.Classic) {
+    return themeClassic;
+  } else if (theme === Theme.Alphabet) {
+    return themeAlphabet;
+  } else if (theme === Theme.Color) {
+    return themeColor;
+  }
+  return themeClassic;
+}
+
 type Props = {
-  initTheme?: Theme;
+  initTheme: Theme;
   initDifficulty?: Difficulty;
   storagePrefix?: string;
 };
@@ -60,7 +45,6 @@ export default function Sudoku({
   initDifficulty = Difficulty.Easy,
   storagePrefix = '',
 }: Props) {
-  const [theme, setTheme] = useState(initTheme);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [status, setStatus] = useState(GameStatus.Playing);
   const [puzzle, setPuzzle] = useState('');
@@ -76,32 +60,14 @@ export default function Sudoku({
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
 
-  const cleanPlaytimeInterval = useCallback(() => {
+  const themed = getThemed(initTheme);
+
+  const clearPlaytimeInterval = useCallback(() => {
     playtimeIntervalId && clearInterval(playtimeIntervalId);
     setPlaytimeIntervalId(null);
   }, [playtimeIntervalId, setPlaytimeIntervalId]);
 
-  const newGame = (difficulty: Difficulty) => {
-    const newPuzzle = generatePuzzle(difficulty);
-    const newPuzzleSolved = sudoku.solve(newPuzzle) || '';
-    setPuzzle(newPuzzle);
-    setCells(puzzleToCells(newPuzzle, newPuzzleSolved));
-    setNotes({});
-    setDifficulty(difficulty);
-    cleanPlaytimeInterval();
-    setPlaytime(0);
-    setMistakes(0);
-  };
-
-  // watch game status to update timer
-  useEffect(() => {
-    if (status !== GameStatus.Playing) {
-      cleanPlaytimeInterval();
-      return;
-    }
-    if (playtimeIntervalId) {
-      return;
-    }
+  const newTimer = () => {
     let prev = Date.now();
     let newIntervalId = setInterval(() => {
       const now = Date.now();
@@ -112,7 +78,31 @@ export default function Sudoku({
       }
     }, 100);
     setPlaytimeIntervalId(newIntervalId);
-  }, [status, setPlaytime, playtimeIntervalId, setPlaytimeIntervalId]);
+  };
+
+  const newGame = (difficulty: Difficulty) => {
+    const newPuzzle = generatePuzzle(difficulty);
+    const newPuzzleSolved = sudoku.solve(newPuzzle) || '';
+    setPuzzle(newPuzzle);
+    setCells(puzzleToCells(newPuzzle, newPuzzleSolved));
+    setNotes({});
+    setDifficulty(difficulty);
+    clearPlaytimeInterval();
+    setPlaytime(0);
+    setMistakes(0);
+  };
+
+  // watch game status to update timer
+  useEffect(() => {
+    if (status !== GameStatus.Playing) {
+      clearPlaytimeInterval();
+      return;
+    }
+    if (playtimeIntervalId) {
+      return;
+    }
+    newTimer();
+  }, [status, playtimeIntervalId, clearPlaytimeInterval]);
 
   useEffect(() => {
     setIsDarkMode(
@@ -125,23 +115,18 @@ export default function Sudoku({
 
     const gameState = loadGame(storagePrefix);
     if (gameState && !gameState.deprecated) {
-      try {
-        setPuzzle(gameState.puzzle);
-        setCells(gameState.cells);
-        setNotes(gameState.notes);
-        setDifficulty(gameState.difficulty);
-        setPlaytime(loadPlaytime(storagePrefix));
-        setMistakes(gameState.mistakes);
-      } catch (e) {
-        console.log(`load game state failed: ${e}`);
-        newGame(difficulty);
-      }
+      setPuzzle(gameState.puzzle);
+      setCells(gameState.cells);
+      setNotes(gameState.notes || []);
+      setDifficulty(gameState.difficulty || Difficulty.Easy);
+      setPlaytime(loadPlaytime(storagePrefix));
+      setMistakes(gameState.mistakes || 0);
     } else {
       newGame(difficulty);
     }
 
     return () => {
-      cleanPlaytimeInterval();
+      clearPlaytimeInterval();
     };
   }, []);
 
@@ -170,6 +155,7 @@ export default function Sudoku({
 
     if (win && Object.keys(cells).length > 0) {
       setStatus(GameStatus.GameSolved);
+      clearPlaytimeInterval();
       setIsGameSolvedModalOpen(true);
     }
   }, [cells]);
@@ -230,7 +216,11 @@ export default function Sudoku({
     <>
       <div className="flex items-center justify-center font-medium text-gray-500">
         <div className="text-base font-bold text-gray-600 sm:text-lg">
-          <DifficultySelect theme={theme} current={difficulty} onClick={handleDifficultyClick} />
+          <DifficultySelect
+            theme={themed.type()}
+            current={difficulty}
+            onClick={handleDifficultyClick}
+          />
         </div>
         <div className="ml-4">Mistakes: {`${mistakes}`}</div>
         <div className="ml-4 flex items-center justify-center">
@@ -247,6 +237,7 @@ export default function Sudoku({
       <div className="mt-2 flex flex-row justify-center">
         <div className="w-full max-w-sm sm:w-[404px] sm:max-w-none">
           <Board
+            themed={themed}
             cells={cells}
             notes={notes}
             chosen={chosenCell}
@@ -257,6 +248,7 @@ export default function Sudoku({
         </div>
         <div className="ml-8 hidden sm:block sm:w-48">
           <KeyboardHorizontal
+            themed={themed}
             onClick={handleKeyClick}
             onNewGameClick={() => setIsNewGameModalOpen(true)}
           />
@@ -265,7 +257,11 @@ export default function Sudoku({
       <div className="flex flex-col items-center justify-center sm:hidden">
         <div className="w-full max-w-sm">
           <hr className="my-4 h-px border-0 bg-gray-200 dark:bg-gray-700" />
-          <Keyboard onClick={handleKeyClick} onNewGameClick={() => setIsNewGameModalOpen(true)} />
+          <Keyboard
+            themed={themed}
+            onClick={handleKeyClick}
+            onNewGameClick={() => setIsNewGameModalOpen(true)}
+          />
         </div>
       </div>
       <GameSolvedModal

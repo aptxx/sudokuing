@@ -120,6 +120,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {SITE_TITLE}
               </h1>
             </a>
+            <a href={`${BASE_URL}/easy`} title={SITE_TITLE} rel="Classic Sudoku">
+              <span className="ml-4 text-sm font-bold tracking-wider text-gray-800 no-underline">
+                Classic
+              </span>
+            </a>
+            <a href={`${BASE_URL}/alphabet/easy`} title={SITE_TITLE} rel="Alphabet Sudoku">
+              <span className="ml-4 text-sm font-bold tracking-wider text-gray-800 no-underline">
+                Alphabet
+              </span>
+            </a>
+            <a href={`${BASE_URL}/color/easy`} title={SITE_TITLE} rel="Color Sudoku">
+              <span className="ml-4 text-sm font-bold tracking-wider text-gray-800 no-underline">
+                Color
+              </span>
+            </a>
           </div>
         </div>
         <div id="root" className="mt-8">
@@ -137,11 +152,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             >
               Sudoku
             </a>{' '}
-            is a logic-based, combinatorial number-placement puzzle. In classic Sudoku, the
-            objective is to fill a 9 x 9 grid with digits so that each column, each row, and each of
-            the nine 3 x 3 subgrids that compose the grid contains all of the digits from 1 to 9.
-            The puzzle setter provides a partially completed grid, which for a well-posed puzzle has
-            a single solution.
+            is a logic-based, combinatorial number-placement puzzle. In classic Sudoku, the goal is
+            to fill a 9 x 9 grid with digits so that each column, each row, and each of the nine 3 x
+            3 subgrids that compose the grid contains all of the digits from 1 to 9. The puzzle
+            setter provides a partially completed grid, which for a well-posed puzzle has a single
+            solution.
           </p>
         </div>
         <div className="x-container post-block mb-12">

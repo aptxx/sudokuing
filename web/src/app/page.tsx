@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { BASE_URL } from '@/config/setting';
 import Sudoku from '@/components/sudoku/Sudoku';
-import { Difficulty, Theme } from '@/constants/constants';
+import { Difficulty, Theme } from '@/components/sudoku/types';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -12,15 +12,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function Home() {
+export default function Page() {
   return (
     <>
       <div className="x-container mb-12">
-        <Sudoku initDifficulty={Difficulty.Easy} initTheme={Theme.Classic} storagePrefix="" />
+        <Sudoku initTheme={Theme.Classic} initDifficulty={Difficulty.Easy} storagePrefix="" />
       </div>
 
       <div className="x-container post-block mb-12">
-        <h2>Sudoku Reborn!</h2>
+        <h2>Sudokuing Now!</h2>
         <p>Play free themed Sudoku and enjoy your day!</p>
       </div>
       <div className="x-container post-block mb-12">
