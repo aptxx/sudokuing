@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import classnames from 'classnames';
 import { PlayIcon } from '@heroicons/react/20/solid';
 import { Cell } from '@/components/board/Cell';
@@ -34,6 +35,8 @@ function isRelated(chosenCell: number, target: number): boolean {
 
   return false;
 }
+
+const CellMemoized = memo(Cell);
 
 type Props = {
   themed: Themed;
@@ -72,7 +75,7 @@ export const Board = ({
         'bg-blue-50': !isChosen && isChosenRelated,
       });
       return (
-        <Cell
+        <CellMemoized
           key={i}
           className={classes}
           status={status}

@@ -67,7 +67,10 @@ export default function Sudoku({
     setPlaytimeIntervalId(null);
   }, [playtimeIntervalId, setPlaytimeIntervalId]);
 
-  const newTimer = () => {
+  const newTimer = useCallback(() => {
+    if (!!playtimeIntervalId) {
+      return;
+    }
     let prev = Date.now();
     let newIntervalId = setInterval(() => {
       const now = Date.now();
@@ -78,7 +81,7 @@ export default function Sudoku({
       }
     }, 100);
     setPlaytimeIntervalId(newIntervalId);
-  };
+  }, [setPlaytime, playtimeIntervalId, setPlaytimeIntervalId]);
 
   const newGame = (difficulty: Difficulty) => {
     const newPuzzle = generatePuzzle(difficulty);
@@ -157,7 +160,6 @@ export default function Sudoku({
 
     if (win && Object.keys(cells).length > 0) {
       setStatus(GameStatus.GameSolved);
-      clearPlaytimeInterval();
       setIsGameSolvedModalOpen(true);
     }
   }, [cells]);
