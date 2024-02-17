@@ -110,6 +110,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {process.env.NODE_ENV === 'production' && <GoogleAnalytics />}
         {process.env.NODE_ENV === 'production' && <GoogleGTM />}
+        {process.env.NODE_ENV === 'production' && (
+          <Script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3943160950859903"
+            crossOrigin="anonymous"
+          />
+        )}
       </head>
 
       <body className={`${OpenSans.className}`}>
