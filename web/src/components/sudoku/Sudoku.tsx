@@ -13,9 +13,9 @@ import { GameOverModal } from '@/components/modals/GameOverModal';
 import { NewGameModal } from '@/components/modals/NewGameModal';
 import DifficultySelect from './DifficultySelect';
 import { loadGame, loadPlaytime, saveGame, savePlaytime } from './storage';
-import themeClassic from '@/app/classic/[difficulty]/themeconfig';
-import themeAlphabet from '@/app/alphabet/[difficulty]/themeconfig';
-import themeColor from '@/app/color/[difficulty]/themeconfig';
+import themeClassic from '@/app/(sudokus)/classic/[difficulty]/themeconfig';
+import themeAlphabet from '@/app/(sudokus)/alphabet/[difficulty]/themeconfig';
+import themeColor from '@/app/(sudokus)/color/[difficulty]/themeconfig';
 
 function formatPlaytime(n: number) {
   const minutes = Math.floor(n / 60);

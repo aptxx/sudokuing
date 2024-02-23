@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { BASE_URL } from '@/config/setting';
 import Sudoku from '@/components/sudoku/Sudoku';
 import { Difficulty, Theme } from '@/components/sudoku/types';
+import Abouts from '@/components/common/Abouts';
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -70,6 +71,7 @@ export default function Page() {
           </ul>
         </div>
       </div>
+      <Abouts />
     </>
   );
 }
