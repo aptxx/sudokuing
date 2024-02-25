@@ -1,4 +1,4 @@
-import { Popover } from '@headlessui/react';
+import { Menu } from '@headlessui/react';
 import classnames from 'classnames';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Difficulty, Theme } from '@/components/sudoku/types';
@@ -32,32 +32,30 @@ export default function DifficultySelect({ theme, current, onClick }: Props) {
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="">
-        <Popover className="relative">
-          <Popover.Button className="flex items-center justify-center">
-            {capitalize(current)} <ChevronDownIcon className="h-6 w-6" />
-          </Popover.Button>
-          <Popover.Panel className="absolute z-10 rounded border border-gray-200 bg-white">
-            {options.map((option) => (
-              <div
-                key={option.difficulty}
-                className={classnames('border border-gray-200 py-1 pl-1 hover:bg-gray-100', {
-                  'text-blue-500 ': option.difficulty === current,
-                })}
+    <Menu as="div" className="relative inline-block text-left">
+      <Menu.Button className="flex">
+        <span>{capitalize(current)}</span>
+        <ChevronDownIcon className="h-6 w-6" />
+      </Menu.Button>
+      <Menu.Items className="absolute z-10 rounded border border-gray-200">
+        {options.map((option) => (
+          <Menu.Item key={option.difficulty}>
+            <div
+              className={classnames('bg-gray-100 px-1 pl-1 pr-6 hover:bg-gray-200', {
+                'pointer-events-none cursor-default text-blue-500': option.difficulty === current,
+              })}
+            >
+              <a
+                href={generateGameLink(theme, option.difficulty)}
+                title={`${theme} ${option.difficulty} - ${SITE_TITLE}`}
+                onClick={() => option.difficulty !== current && onOptionClick(option.difficulty)}
               >
-                <a
-                  href={generateGameLink(theme, option.difficulty)}
-                  title={`${theme} ${option.difficulty} - ${SITE_TITLE}`}
-                  onClick={() => option.difficulty !== current && onOptionClick(option.difficulty)}
-                >
-                  {capitalize(option.difficulty)}
-                </a>
-              </div>
-            ))}
-          </Popover.Panel>
-        </Popover>
-      </div>
-    </div>
+                {capitalize(option.difficulty)}
+              </a>
+            </div>
+          </Menu.Item>
+        ))}
+      </Menu.Items>
+    </Menu>
   );
 }
