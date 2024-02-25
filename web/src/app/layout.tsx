@@ -172,9 +172,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="static flex h-14 w-full items-center justify-between bg-default-color text-black shadow dark:bg-black dark:text-white">
           <div className="x-container flex items-center justify-between">
             <a href={BASE_URL} title={SITE_TITLE} rel="home">
-              <h1 className="text-xl font-bold tracking-wider text-gray-800 no-underline sm:text-2xl">
+              <span className="text-xl font-bold tracking-wider text-gray-800 no-underline sm:text-2xl">
                 {SITE_TITLE}
-              </h1>
+              </span>
             </a>
             <a href={`${BASE_URL}/easy`} title={SITE_TITLE} rel="Classic Sudoku">
               <span className="ml-4 text-sm font-bold tracking-wider text-gray-800 no-underline">

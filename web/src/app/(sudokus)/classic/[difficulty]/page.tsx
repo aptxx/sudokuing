@@ -33,7 +33,7 @@ export default function Page({ params, searchParams }: Props) {
       </div>
 
       <div className="x-container post-block mb-12">
-        <h2>{capitalize(theme)} Sudoku</h2>
+        <h1>{`${capitalize(theme)} Sudoku`}</h1>
         <p>
           You are playing {difficulty} {theme} Sudoku. {capitalize(theme)} Sudoku is one of the most
           popular theme and appeared in the 20th century. The basic elements are 1 to 9, your goal

@@ -35,7 +35,7 @@ export default function Page({ params, searchParams }: Props) {
       </div>
 
       <div className="x-container post-block mb-12">
-        <h2>{capitalize(theme)} Sudoku</h2>
+        <h1>{`${capitalize(theme)} Sudoku`}</h1>
         <div className="post-content">
           You are playing {difficulty} {theme} Sudoku. The basic elements are{' '}
           <ElementsLine elements={themeconfig.getElements()} />, your goal is to fill the 9x9 grid

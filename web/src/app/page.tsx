@@ -21,8 +21,8 @@ export default function Page() {
       </div>
 
       <div className="x-container post-block mb-12">
-        <h2>Sudokuing Now!</h2>
-        <p>Play free themed Sudoku and enjoy your day!</p>
+        <h1>Sudokuing</h1>
+        <p>Play free Sudoku online with themes and enjoy your day!</p>
       </div>
       <div className="x-container post-block mb-12">
         <h2>How to play Sudoku</h2>
