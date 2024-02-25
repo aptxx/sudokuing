@@ -45,7 +45,6 @@ export default function Sudoku({
   initDifficulty = Difficulty.Easy,
   storagePrefix = '',
 }: Props) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [status, setStatus] = useState(GameStatus.Playing);
   const [puzzle, setPuzzle] = useState('');
   const [cells, setCells] = useState({} as { [key: number]: CellValue });
@@ -110,14 +109,6 @@ export default function Sudoku({
   }, [status, playtimeIntervalId, clearPlaytimeInterval]);
 
   useEffect(() => {
-    setIsDarkMode(
-      localStorage.getItem('color-scheme')
-        ? localStorage.getItem('color-scheme') === 'dark'
-        : window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? true
-          : false
-    );
-
     const gameState = loadGame(storagePrefix);
     if (gameState && !gameState.deprecated) {
       setPuzzle(gameState.puzzle);
@@ -134,14 +125,6 @@ export default function Sudoku({
       clearPlaytimeInterval();
     };
   }, []);
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [isDarkMode]);
 
   useEffect(() => {
     saveGame(storagePrefix, { puzzle, cells, notes, difficulty, deprecated, mistakes });
@@ -222,8 +205,8 @@ export default function Sudoku({
 
   return (
     <>
-      <div className="flex items-center justify-center font-medium text-gray-500">
-        <div className="text-base font-bold text-gray-600 sm:text-lg">
+      <div className="flex items-center justify-center font-medium text-gray-500 dark:text-gray-200">
+        <div className="text-base font-bold sm:text-lg">
           <DifficultySelect
             theme={themed.type()}
             current={difficulty}
@@ -274,6 +257,7 @@ export default function Sudoku({
       </div>
       <GameSolvedModal
         isOpen={isGameSolvedModalOpen}
+        playtime={playtime}
         handleClose={() => {
           setIsGameSolvedModalOpen(false);
         }}

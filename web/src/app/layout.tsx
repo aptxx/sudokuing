@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { Open_Sans } from 'next/font/google';
 import Script from 'next/script';
 import {
@@ -104,9 +105,39 @@ const OpenSans = Open_Sans({
   style: 'normal',
 });
 
+const DynamicDarkmodeSwitch = dynamic(() => import('@/components/common/DarkmodeSwitch'), {
+  loading: () => <span>Dark Mode</span>,
+});
+
+const Header = () => {
+  return (
+    <div className="static flex h-14 w-full items-center justify-between bg-default-color text-black shadow dark:bg-black dark:text-gray-200">
+      <div className="x-container flex w-full items-center justify-between">
+        <div className="flex items-center justify-between font-bold">
+          <a href={BASE_URL} title={SITE_TITLE} rel="home">
+            <span className="text-xl tracking-wider no-underline sm:text-2xl">{SITE_TITLE}</span>
+          </a>
+          <a href={`${BASE_URL}/easy`} title={SITE_TITLE} rel="Classic Sudoku">
+            <span className="ml-4 text-sm tracking-wider no-underline">Classic</span>
+          </a>
+          <a href={`${BASE_URL}/alphabet/easy`} title={SITE_TITLE} rel="Alphabet Sudoku">
+            <span className="ml-4 text-sm tracking-wider no-underline">Alphabet</span>
+          </a>
+          <a href={`${BASE_URL}/color/easy`} title={SITE_TITLE} rel="Color Sudoku">
+            <span className="ml-4 text-sm tracking-wider no-underline">Color</span>
+          </a>
+        </div>
+        <div>
+          <DynamicDarkmodeSwitch />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Footer = () => {
   return (
-    <footer className="mt-4 w-full bg-gray-800 text-xs text-gray-200 shadow dark:bg-black dark:text-white">
+    <footer className="mt-4 w-full bg-gray-800 text-xs text-gray-200 shadow dark:bg-black dark:text-gray-200">
       <div className="mx-2 flex items-center justify-between py-2 sm:mx-8 md:mx-32">
         <div>
           <span>© {SITE_TITLE}</span>
@@ -168,32 +199,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
       </head>
 
-      <body className={`${OpenSans.className}`}>
-        <div className="static flex h-14 w-full items-center justify-between bg-default-color text-black shadow dark:bg-black dark:text-white">
-          <div className="x-container flex items-center justify-between">
-            <a href={BASE_URL} title={SITE_TITLE} rel="home">
-              <span className="text-xl font-bold tracking-wider text-gray-800 no-underline sm:text-2xl">
-                {SITE_TITLE}
-              </span>
-            </a>
-            <a href={`${BASE_URL}/easy`} title={SITE_TITLE} rel="Classic Sudoku">
-              <span className="ml-4 text-sm font-bold tracking-wider text-gray-800 no-underline">
-                Classic
-              </span>
-            </a>
-            <a href={`${BASE_URL}/alphabet/easy`} title={SITE_TITLE} rel="Alphabet Sudoku">
-              <span className="ml-4 text-sm font-bold tracking-wider text-gray-800 no-underline">
-                Alphabet
-              </span>
-            </a>
-            <a href={`${BASE_URL}/color/easy`} title={SITE_TITLE} rel="Color Sudoku">
-              <span className="ml-4 text-sm font-bold tracking-wider text-gray-800 no-underline">
-                Color
-              </span>
-            </a>
-          </div>
-        </div>
-        <div id="root" className="mt-8">
+      <body className={`${OpenSans.className} dark:bg-black dark:text-gray-200`}>
+        <Header />
+        <div id="root" className="mt-4">
           {children}
         </div>
         <Footer />

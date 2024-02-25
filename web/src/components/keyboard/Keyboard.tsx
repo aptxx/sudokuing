@@ -16,7 +16,7 @@ export const Keyboard = ({ themed, onClick, onNewGameClick }: Props) => {
 
   return (
     <KeyboardBase
-      className="w-full text-xl font-normal text-gray-600 dark:text-white"
+      className="w-full text-xl font-normal text-gray-600 dark:text-gray-200"
       onClick={onValueClick}
     >
       <div className="flex w-full flex-col justify-center">
@@ -25,7 +25,7 @@ export const Keyboard = ({ themed, onClick, onNewGameClick }: Props) => {
             <div key={key} className="mx-0.5 flex-auto">
               <Square>
                 <Key
-                  className="h-full w-full bg-gray-50 text-2xl hover:bg-gray-100"
+                  className="h-full w-full bg-gray-50 text-2xl hover:bg-gray-100 dark:bg-black dark:hover:bg-gray-800"
                   value={key}
                   onClick={onValueClick}
                 >
@@ -37,14 +37,14 @@ export const Keyboard = ({ themed, onClick, onNewGameClick }: Props) => {
         </div>
         <div className="mt-2 flex items-center justify-around text-base">
           <Key
-            className="h-10 w-full bg-gray-50 text-gray-600 hover:bg-gray-100"
+            className="h-10 w-full bg-gray-50 hover:bg-gray-100 dark:bg-black dark:hover:bg-gray-800"
             value={'Backspace'}
             onClick={onValueClick}
           >
             Delete
           </Key>
           <Key
-            className="ml-4 h-10 w-full bg-blue-500 text-gray-200 hover:bg-blue-600"
+            className="ml-4 h-10 w-full bg-blue-500 text-gray-100 hover:bg-blue-600"
             value=""
             onClick={(_) => onNewGameClick?.()}
           >

@@ -7,7 +7,7 @@ export default function Abouts() {
         <h2>About Sudoku</h2>
         <p>
           <a
-            className="text-blue-600 hover:underline"
+            className="text-blue-600 hover:underline dark:text-blue-400"
             href="https://en.wikipedia.org/wiki/Sudoku"
             rel="nofollow"
             title="Sudoku"

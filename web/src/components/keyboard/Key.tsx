@@ -15,7 +15,7 @@ export const Key = ({ children, className, value = '', onClick }: Props) => {
   };
 
   const classes = classnames(
-    'flex items-center justify-center cursor-pointer select-none rounded border border-gray-300',
+    'flex items-center justify-center cursor-pointer select-none rounded border border-gray-200 dark:border-gray-600',
     className || '',
     {}
   );

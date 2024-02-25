@@ -41,7 +41,7 @@ export default function DifficultySelect({ theme, current, onClick }: Props) {
         {options.map((option) => (
           <Menu.Item key={option.difficulty}>
             <div
-              className={classnames('bg-gray-100 px-1 pl-1 pr-6 hover:bg-gray-200', {
+              className={classnames('bg-gray-100 px-1 pl-1 pr-6 hover:bg-gray-200 dark:bg-black', {
                 'pointer-events-none cursor-default text-blue-500': option.difficulty === current,
               })}
             >

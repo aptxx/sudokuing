@@ -30,6 +30,30 @@
   .post-block li {
     @apply my-2;
   }
+
+  .dark .post-block h1,
+  .dark .post-block h2,
+  .dark .post-block h3,
+  .dark .post-block h4,
+  .dark .post-block h5 {
+    @apply text-xl font-bold text-gray-200 sm:text-2xl;
+  }
+
+  .dark .post-block p {
+    @apply mt-4 text-sm text-gray-400;
+  }
+
+  .dark .post-block .post-content {
+    @apply mt-4 text-sm text-gray-400;
+  }
+
+  .dark .post-block ul {
+    @apply list-inside list-disc rounded-lg bg-gray-700 p-4 text-sm text-gray-400;
+  }
+
+  .dark .post-block li {
+    @apply my-2;
+  }
 }
 
 :root {

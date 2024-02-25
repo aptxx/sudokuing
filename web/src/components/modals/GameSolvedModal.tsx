@@ -1,16 +1,23 @@
 import { BaseModal } from './BaseModal';
 
+function formatPlaytime(playtime: number): string {
+  const minutes = Math.floor(playtime / 60);
+  const seconds = playtime % 60;
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
 type Props = {
   isOpen: boolean;
+  playtime: number;
   handleClose: () => void;
   handleNewGame: () => void;
 };
 
-export const GameSolvedModal = ({ isOpen, handleClose, handleNewGame }: Props) => {
+export const GameSolvedModal = ({ isOpen, playtime = 0, handleClose, handleNewGame }: Props) => {
   return (
     <BaseModal title="Congratulations!" isOpen={isOpen} handleClose={handleClose}>
       <p className="text-sm text-gray-500 dark:text-gray-300">
-        Puzzle is solved. You're an amazing player!
+        {`Puzzle is solved in ${formatPlaytime(playtime)}. You're an amazing player!`}
       </p>
       <div className="mt-4 flex justify-center">
         <button
