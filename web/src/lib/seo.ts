@@ -15,9 +15,9 @@ export function generatePageInfo(theme: Theme, difficulty: Difficulty): PageInfo
   const difficultyCap = capitalize(difficulty);
 
   return {
-    title: `${difficultyCap} ${themeCap}`,
-    keywords: `${SITE_KEYWORDS}, ${themeCap} Sudoku, ${difficultyCap} Sudoku`,
-    description: `${difficultyCap} ${themeCap} Sudoku - ${SITE_DESCRIPTION}`,
+    title: `${themeCap} Sudoku ${difficultyCap}`,
+    keywords: `${SITE_KEYWORDS}, ${themeCap} Sudoku, Sudoku ${difficultyCap}`,
+    description: `${themeCap} Sudoku ${difficultyCap} - ${SITE_DESCRIPTION}`,
     url: theme === Theme.Classic ? `${BASE_URL}/${difficulty}` : `${BASE_URL}/${theme}/${difficulty}`
   }
 }

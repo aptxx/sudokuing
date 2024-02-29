@@ -11,6 +11,8 @@ import {
   SITE_TITLE,
 } from '@/config/setting';
 import '@/styles/globals.css';
+import GoogleAnalytics from '@/components/common/google/GoogleAnalytics';
+import GoogleGTM from '@/components/common/google/GoogleGTM';
 
 export const runtime = 'edge';
 
@@ -20,8 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: baseURL,
     title: {
-      default: `${SITE_TITLE} - Sudoku Puzzles | Sudokuing`,
-      template: '%s - Sudoku Puzzles | Sudokuing ',
+      default: `${SITE_TITLE} - Free Sudoku Online | Sudokuing`,
+      template: '%s - Free Sudoku Online | Sudokuing',
     },
     keywords: SITE_KEYWORDS,
     description: SITE_DESCRIPTION,
@@ -48,55 +50,6 @@ export async function generateMetadata(): Promise<Metadata> {
       { rel: 'apple-touch-icon', url: '/apple-touch-icon.png' },
     ],
   };
-}
-
-function GoogleAnalytics() {
-  if (!GOOGLE_MEASUREMENT_ID) {
-    return <></>;
-  }
-
-  return (
-    <>
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_MEASUREMENT_ID}`}
-        strategy="afterInteractive"
-      />
-      <Script
-        id="google-analytics"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GOOGLE_MEASUREMENT_ID}');
-        `,
-        }}
-      />
-    </>
-  );
-}
-
-function GoogleGTM() {
-  if (!GOOGLE_GTM_ID) {
-    return <></>;
-  }
-
-  return (
-    <Script
-      id="gtm"
-      strategy="afterInteractive"
-      dangerouslySetInnerHTML={{
-        __html: `
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','${GOOGLE_GTM_ID}');
-      `,
-      }}
-    />
-  );
 }
 
 const OpenSans = Open_Sans({
@@ -188,8 +141,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {process.env.NODE_ENV === 'production' && <GoogleAnalytics />}
-        {process.env.NODE_ENV === 'production' && <GoogleGTM />}
+        {process.env.NODE_ENV === 'production' && (
+          <GoogleAnalytics measurementID={GOOGLE_MEASUREMENT_ID} />
+        )}
+        {process.env.NODE_ENV === 'production' && <GoogleGTM gtmID={GOOGLE_GTM_ID} />}
         {process.env.NODE_ENV === 'production' && (
           <Script
             async
