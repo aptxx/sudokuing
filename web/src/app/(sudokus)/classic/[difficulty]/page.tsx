@@ -33,15 +33,15 @@ export default function Page({ params, searchParams }: Props) {
       </div>
 
       <div className="x-container post-block mb-12">
-        <h1>{`${capitalize(theme)} Sudoku`}</h1>
+        <h1>{`${capitalize(theme)} Sudoku ${capitalize(difficulty)}`}</h1>
         <p>
-          You are playing {difficulty} {theme} Sudoku. {capitalize(theme)} Sudoku is one of the most
-          popular theme and appeared in the 20th century. The basic elements are 1 to 9, your goal
-          is to fill the 9x9 grid with the basic elements.
+          You are playing {`${theme} sudoku ${difficulty}`}. {capitalize(theme)} Sudoku is one of
+          the most popular theme and appeared in the 20th century. The basic elements are 1 to 9,
+          your goal is to fill the 9x9 grid with the basic elements.
         </p>
       </div>
       <div className="x-container post-block mb-12">
-        <h2>How to play {theme} Sudoku</h2>
+        <h2>{`How to play ${theme} Sudoku`}</h2>
         <div>
           <p className="mb-2">
             The game board consists of a 9x9 grid, divided into 9 smaller 3x3 squares. The game goal
