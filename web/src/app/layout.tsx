@@ -11,8 +11,7 @@ import {
   SITE_TITLE,
 } from '@/config/setting';
 import '@/styles/globals.css';
-import GoogleAnalytics from '@/components/common/google/GoogleAnalytics';
-import GoogleGTM from '@/components/common/google/GoogleGTM';
+import { GoogleTagManager, GoogleAnalytics } from '@next/third-parties/google';
 
 export const runtime = 'edge';
 
@@ -141,10 +140,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {process.env.NODE_ENV === 'production' && (
-          <GoogleAnalytics measurementID={GOOGLE_MEASUREMENT_ID} />
-        )}
-        {process.env.NODE_ENV === 'production' && <GoogleGTM gtmID={GOOGLE_GTM_ID} />}
+        {process.env.NODE_ENV === 'production' && <GoogleAnalytics gaId={GOOGLE_MEASUREMENT_ID} />}
+        {process.env.NODE_ENV === 'production' && <GoogleTagManager gtmId={GOOGLE_GTM_ID} />}
         {process.env.NODE_ENV === 'production' && (
           <Script
             async
