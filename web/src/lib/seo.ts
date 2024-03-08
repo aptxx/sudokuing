@@ -34,6 +34,14 @@ export function generateBaseMetadata(theme: Theme, difficulty: Difficulty): Meta
       locale: 'en_US',
       url: pageinfo.url,
       description: pageinfo.description,
+      images: [
+        {
+          url: `${BASE_URL}/opengraph-image.png`,
+          width: 512,
+          height: 512,
+          alt: pageinfo.title,
+        },
+      ],
     },
     alternates: {
       canonical: pageinfo.url,

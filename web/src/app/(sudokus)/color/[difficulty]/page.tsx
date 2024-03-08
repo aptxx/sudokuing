@@ -1,6 +1,6 @@
 import Sudoku from '@/components/sudoku/Sudoku';
 import { Difficulty, Theme } from '@/components/sudoku/types';
-import { generateBaseMetadata } from '@/lib/seo';
+import { generateBaseMetadata, generateIinkedData } from '@/lib/seo';
 import { capitalize } from '@/lib/utils';
 import { Metadata, ResolvingMetadata } from 'next';
 import themeconfig from './themeconfig';
@@ -21,7 +21,7 @@ export async function generateMetadata(
 export default function Page({ params, searchParams }: Props) {
   const theme = Theme.Color;
   const difficulty = params.difficulty as Difficulty;
-  const jsonLd = generateBaseMetadata(theme, difficulty);
+  const jsonLd = generateIinkedData(theme, difficulty);
 
   return (
     <>

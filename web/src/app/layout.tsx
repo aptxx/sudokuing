@@ -37,6 +37,14 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: 'en_US',
       url: BASE_URL,
       description: SITE_DESCRIPTION,
+      images: [
+        {
+          url: `${BASE_URL}/opengraph-image.png`,
+          width: 512,
+          height: 512,
+          alt: SITE_TITLE,
+        },
+      ],
     },
     appleWebApp: {
       title: SITE_TITLE,
