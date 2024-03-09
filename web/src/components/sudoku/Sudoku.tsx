@@ -13,9 +13,9 @@ import { GameOverModal } from '@/components/modals/GameOverModal';
 import { NewGameModal } from '@/components/modals/NewGameModal';
 import DifficultySelect from './DifficultySelect';
 import { loadGame, loadPlaytime, saveGame, savePlaytime } from './storage';
-import themeClassic from '@/app/(sudokus)/classic/[difficulty]/themeconfig';
-import themeAlphabet from '@/app/(sudokus)/alphabet/[difficulty]/themeconfig';
-import themeColor from '@/app/(sudokus)/color/[difficulty]/themeconfig';
+import themeClassic from '@/app/(sudokus)/classic/[difficulty]/theme';
+import themeAlphabet from '@/app/(sudokus)/alphabet/[difficulty]/theme';
+import themeColor from '@/app/(sudokus)/color/[difficulty]/theme';
 
 function formatPlaytime(n: number) {
   const minutes = Math.floor(n / 60);
@@ -256,7 +256,7 @@ export default function Sudoku({
         </div>
       </div>
       <GameSolvedModal
-        isOpen={isGameSolvedModalOpen}
+        open={isGameSolvedModalOpen}
         playtime={playtime}
         handleClose={() => {
           setIsGameSolvedModalOpen(false);
@@ -267,13 +267,13 @@ export default function Sudoku({
         }}
       />
       <GameOverModal
-        isOpen={isGameOverModalOpen}
+        open={isGameOverModalOpen}
         handleClose={() => {
           setIsGameOverModalOpen(false);
         }}
       />
       <NewGameModal
-        isOpen={isNewGameModalOpen}
+        open={isNewGameModalOpen}
         handleClose={() => {
           setIsNewGameModalOpen(false);
         }}

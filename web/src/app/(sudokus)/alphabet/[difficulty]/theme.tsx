@@ -3,7 +3,7 @@ import { Element, ElementStatus, Theme } from '@/components/sudoku/types';
 
 const elements = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 
-const themeconfig = {
+const theme = {
   type() {
     return Theme.Alphabet;
   },
@@ -25,4 +25,4 @@ const themeconfig = {
   },
 };
 
-export default themeconfig;
+export default theme;

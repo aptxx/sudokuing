@@ -71,8 +71,8 @@ export const Board = ({
         'border-b-gray-600 dark:border-b-gray-300': (row + 1) % 3 === 0,
         'border-l-gray-600 dark:border-l-gray-300': col % 3 === 0,
         'border-r-gray-600 dark:border-r-gray-300': (col + 1) % 3 === 0,
-        'bg-blue-100 dark:bg-gray-500': isChosen,
-        'bg-blue-50 dark:bg-gray-400': !isChosen && isChosenRelated,
+        'bg-blue-200 dark:bg-gray-700': isChosen,
+        'bg-blue-50 dark:bg-gray-900': !isChosen && isChosenRelated,
       });
       return (
         <CellMemoized
@@ -87,7 +87,7 @@ export const Board = ({
       );
     });
   return (
-    <Square>
+    <Square id="sudoku-board">
       <div className="relative grid h-full w-full text-2xl font-normal text-gray-700 dark:text-gray-200">
         <div className="grid-rows-9 grid grid-cols-9 gap-0 rounded border border-solid border-gray-600 dark:border-gray-300">
           {elems}

@@ -1,17 +1,17 @@
 import { BaseModal } from './BaseModal';
 
 type Props = {
-  isOpen: boolean;
+  open: boolean;
   handleClose: () => void;
   handleConfirm: () => void;
   handleCancel: () => void;
 };
 
-export const NewGameModal = ({ isOpen, handleClose, handleConfirm, handleCancel }: Props) => {
+export const NewGameModal = ({ open, handleClose, handleConfirm, handleCancel }: Props) => {
   return (
-    <BaseModal title="Continue?" isOpen={isOpen} handleClose={handleClose}>
+    <BaseModal title="Continue?" open={open} closeButtonDisable={true} handleClose={handleClose}>
       <p className="text-sm text-gray-500 dark:text-gray-300">
-        Creating a new game will clear the puzzle.
+        Creating a new game will clear the current puzzle.
       </p>
       <div className="mt-4 flex justify-center">
         <button

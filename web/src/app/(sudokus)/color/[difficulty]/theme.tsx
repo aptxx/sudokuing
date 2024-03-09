@@ -14,7 +14,7 @@ const elements = [
   <div className="block h-[90%] w-[90%] bg-teal-500"></div>,
 ];
 
-const themeconfig = {
+const theme = {
   type() {
     return Theme.Color;
   },
@@ -47,4 +47,4 @@ const themeconfig = {
   },
 };
 
-export default themeconfig;
+export default theme;

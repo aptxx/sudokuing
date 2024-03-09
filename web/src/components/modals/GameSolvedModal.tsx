@@ -7,15 +7,15 @@ function formatPlaytime(playtime: number): string {
 }
 
 type Props = {
-  isOpen: boolean;
+  open: boolean;
   playtime: number;
   handleClose: () => void;
   handleNewGame: () => void;
 };
 
-export const GameSolvedModal = ({ isOpen, playtime = 0, handleClose, handleNewGame }: Props) => {
+export const GameSolvedModal = ({ open, playtime = 0, handleClose, handleNewGame }: Props) => {
   return (
-    <BaseModal title="Congratulations!" isOpen={isOpen} handleClose={handleClose}>
+    <BaseModal title="Congratulations!" open={open} handleClose={handleClose}>
       <p className="text-sm text-gray-500 dark:text-gray-300">
         {`Puzzle is solved in ${formatPlaytime(playtime)}. You're an amazing player!`}
       </p>

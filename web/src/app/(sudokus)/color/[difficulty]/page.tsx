@@ -3,7 +3,7 @@ import { Difficulty, Theme } from '@/components/sudoku/types';
 import { generateBaseMetadata, generateIinkedData } from '@/lib/seo';
 import { capitalize } from '@/lib/utils';
 import { Metadata, ResolvingMetadata } from 'next';
-import themeconfig from './themeconfig';
+import themeconfig from './theme';
 import ElementsLine from '@/components/common/ElementsLine';
 
 type Props = {
