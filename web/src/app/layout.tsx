@@ -5,13 +5,12 @@ import Script from 'next/script';
 import {
   BASE_URL,
   GOOGLE_GTM_ID,
-  GOOGLE_MEASUREMENT_ID,
   SITE_DESCRIPTION,
   SITE_KEYWORDS,
   SITE_TITLE,
 } from '@/config/setting';
 import '@/styles/globals.css';
-import { GoogleTagManager, GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleTagManager } from '@next/third-parties/google';
 
 export const runtime = 'edge';
 
@@ -148,7 +147,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {process.env.NODE_ENV === 'production' && <GoogleAnalytics gaId={GOOGLE_MEASUREMENT_ID} />}
         {process.env.NODE_ENV === 'production' && <GoogleTagManager gtmId={GOOGLE_GTM_ID} />}
         {process.env.NODE_ENV === 'production' && (
           <Script
