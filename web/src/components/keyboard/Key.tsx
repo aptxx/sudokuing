@@ -14,11 +14,7 @@ export const Key = ({ children, className, value = '', onClick }: Props) => {
     event.currentTarget.blur();
   };
 
-  const classes = classnames(
-    'flex items-center justify-center cursor-pointer select-none rounded border border-gray-200 dark:border-gray-600',
-    className || '',
-    {}
-  );
+  const classes = classnames('keyboard-key', className || '', {});
 
   return (
     <div aria-label={`key-${value}`} onClick={handleClick} className={classes}>

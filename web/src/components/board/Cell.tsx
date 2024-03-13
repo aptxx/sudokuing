@@ -13,10 +13,7 @@ type Props = {
 };
 
 export const Cell = ({ className, themed, status, value, notes, onClick }: Props) => {
-  const classes = classnames(
-    'w-full h-full flex justify-center items-center text-center align-middle',
-    className || ''
-  );
+  const classes = classnames('board-cell', className || '');
   if (status === GameStatus.Paused) {
     return (
       <Square>

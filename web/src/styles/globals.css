@@ -12,47 +12,35 @@
   .post-block h3,
   .post-block h4,
   .post-block h5 {
-    @apply text-xl font-bold text-gray-800 sm:text-2xl;
+    @apply text-xl font-bold text-gray-800 dark:text-gray-200 sm:text-2xl;
   }
 
   .post-block p {
-    @apply mt-4 text-sm text-gray-500;
+    @apply mt-4 text-sm text-gray-500 dark:text-gray-400;
   }
 
   .post-block .post-content {
-    @apply mt-4 text-sm text-gray-500;
+    @apply mt-4 text-sm text-gray-500 dark:text-gray-400;
   }
 
   .post-block ul {
-    @apply list-inside list-disc rounded-lg bg-gray-100 p-4 text-sm text-gray-500;
+    @apply list-inside list-disc rounded-lg bg-gray-100 p-4 text-sm text-gray-500 dark:bg-gray-700 dark:text-gray-400;
   }
 
   .post-block li {
     @apply my-2;
   }
 
-  .dark .post-block h1,
-  .dark .post-block h2,
-  .dark .post-block h3,
-  .dark .post-block h4,
-  .dark .post-block h5 {
-    @apply text-xl font-bold text-gray-200 sm:text-2xl;
+  .keyboard-key {
+    @apply flex cursor-pointer select-none items-center justify-center rounded border border-gray-200 dark:border-gray-600;
   }
 
-  .dark .post-block p {
-    @apply mt-4 text-sm text-gray-400;
+  .board-cell {
+    @apply flex h-full w-full items-center justify-center text-center align-middle;
   }
 
-  .dark .post-block .post-content {
-    @apply mt-4 text-sm text-gray-400;
-  }
-
-  .dark .post-block ul {
-    @apply list-inside list-disc rounded-lg bg-gray-700 p-4 text-sm text-gray-400;
-  }
-
-  .dark .post-block li {
-    @apply my-2;
+  .board-cell-box {
+    @apply border border-solid border-gray-300 dark:border-gray-600;
   }
 }
 

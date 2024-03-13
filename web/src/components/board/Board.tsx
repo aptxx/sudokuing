@@ -66,7 +66,7 @@ export const Board = ({
 
       const row = Math.floor(i / 9);
       const col = i % 9;
-      const classes = classnames('border border-gray-300 border-solid dark:border-gray-600', {
+      const classes = classnames('board-cell-box', {
         'border-t-gray-600 dark:border-t-gray-300': row % 3 === 0,
         'border-b-gray-600 dark:border-b-gray-300': (row + 1) % 3 === 0,
         'border-l-gray-600 dark:border-l-gray-300': col % 3 === 0,
