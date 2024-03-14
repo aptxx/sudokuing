@@ -155,6 +155,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             crossOrigin="anonymous"
           />
         )}
+        {process.env.NODE_ENV === 'production' && (
+          <Script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" />
+        )}
       </head>
 
       <body className={`${OpenSans.className} dark:bg-black dark:text-gray-200`}>
