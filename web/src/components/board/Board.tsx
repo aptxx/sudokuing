@@ -4,6 +4,8 @@ import { PlayIcon } from '@heroicons/react/20/solid';
 import { Cell } from '@/components/board/Cell';
 import Square from '../common/Square';
 import { CellValue, GameStatus, Themed } from '../sudoku/types';
+import GameSolved from './GameSolved';
+import GameOver from './GameOver';
 
 function isRelated(chosenCell: number, target: number): boolean {
   if (chosenCell < 0 || chosenCell === undefined || chosenCell === target) {
@@ -44,8 +46,11 @@ type Props = {
   notes: { [key: number]: number[] };
   chosen?: number;
   status?: GameStatus;
+  chances?: number;
   onCellClick?: (position: number) => void;
   onResumeClick?: () => void;
+  onNewGameClick?: () => void;
+  onSecondChanceClick?: () => void;
 };
 
 export const Board = ({
@@ -54,8 +59,11 @@ export const Board = ({
   notes,
   chosen,
   status,
+  chances,
   onCellClick,
   onResumeClick,
+  onNewGameClick,
+  onSecondChanceClick,
 }: Props) => {
   const chosenCell = chosen || -1;
   const elems = Array(81)
@@ -97,6 +105,21 @@ export const Board = ({
             <button onClick={() => onResumeClick?.()}>
               <PlayIcon className="h-16 w-16" />
             </button>
+          </div>
+        )}
+        {status == GameStatus.GameOver && (
+          <div className="absolute left-0 top-0 h-full w-full">
+            <GameOver
+              open={true}
+              showNewGameButton={!!chances && chances > 0}
+              onNewGameClick={() => onNewGameClick?.()}
+              onSecondChanceClick={() => onSecondChanceClick?.()}
+            />
+          </div>
+        )}
+        {status == GameStatus.GameSolved && (
+          <div className="absolute left-0 top-0 h-full w-full">
+            <GameSolved open={true} onNewGameClick={() => onNewGameClick?.()} />
           </div>
         )}
       </div>

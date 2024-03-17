@@ -8,14 +8,16 @@ import { Board } from '@/components/board/Board';
 import { generatePuzzle, puzzleToCells } from '@/lib/utils';
 import { KeyboardHorizontal } from '@/components/keyboard/KeyboardHorizontal';
 import { Keyboard } from '@/components/keyboard/Keyboard';
-import { GameSolvedModal } from '@/components/modals/GameSolvedModal';
-import { GameOverModal } from '@/components/modals/GameOverModal';
 import { NewGameModal } from '@/components/modals/NewGameModal';
 import DifficultySelect from './DifficultySelect';
 import { loadGame, loadPlaytime, saveGame, savePlaytime } from './storage';
 import themeClassic from '@/app/(sudokus)/classic/[difficulty]/theme';
 import themeAlphabet from '@/app/(sudokus)/alphabet/[difficulty]/theme';
 import themeColor from '@/app/(sudokus)/color/[difficulty]/theme';
+
+const DEFAULT_MAX_MISTAKES = 2;
+const DEFAULT_HINTS = 2;
+const DEFAULT_CHANCES = 2;
 
 function formatPlaytime(n: number) {
   const minutes = Math.floor(n / 60);
@@ -51,12 +53,12 @@ export default function Sudoku({
   const [notes, setNotes] = useState({} as { [key: number]: number[] });
   const [difficulty, setDifficulty] = useState(initDifficulty);
   const [deprecated, setDeprecated] = useState(0);
+  const [hints, setHints] = useState(DEFAULT_HINTS);
+  const [chances, setChances] = useState(DEFAULT_CHANCES);
   const [chosenCell, setChosenCell] = useState(-1);
   const [playtimeIntervalId, setPlaytimeIntervalId] = useState<any>(null);
   const [playtime, setPlaytime] = useState(0); // seconds
   const [mistakes, setMistakes] = useState(0);
-  const [isGameSolvedModalOpen, setIsGameSolvedModalOpen] = useState(false);
-  const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
 
   const themed = getThemed(initTheme);
@@ -89,6 +91,8 @@ export default function Sudoku({
     setCells(puzzleToCells(newPuzzle, newPuzzleSolved));
     setNotes({});
     setDifficulty(difficulty);
+    setHints(DEFAULT_HINTS);
+    setChances(DEFAULT_CHANCES);
     clearPlaytimeInterval();
     setPlaytime(0);
     setMistakes(0);
@@ -116,6 +120,8 @@ export default function Sudoku({
       setNotes(gameState.notes || []);
       setDifficulty(gameState.difficulty || Difficulty.Easy);
       setPlaytime(loadPlaytime(storagePrefix));
+      setHints(gameState.hints || DEFAULT_HINTS);
+      setChances(gameState.chances || DEFAULT_CHANCES);
       setMistakes(gameState.mistakes || 0);
     } else {
       newGame(difficulty);
@@ -127,12 +133,27 @@ export default function Sudoku({
   }, []);
 
   useEffect(() => {
-    saveGame(storagePrefix, { puzzle, cells, notes, difficulty, deprecated, mistakes });
-  }, [storagePrefix, puzzle, cells, notes, difficulty, deprecated, mistakes]);
+    saveGame(storagePrefix, {
+      puzzle,
+      cells,
+      notes,
+      difficulty,
+      deprecated,
+      mistakes,
+      hints,
+      chances,
+    });
+  }, [storagePrefix, puzzle, cells, notes, difficulty, deprecated, mistakes, hints, chances]);
 
   useEffect(() => {
     savePlaytime(playtime, storagePrefix);
   }, [playtime]);
+
+  useEffect(() => {
+    if (mistakes > DEFAULT_MAX_MISTAKES) {
+      setStatus(GameStatus.GameOver);
+    }
+  }, [mistakes]);
 
   useEffect(() => {
     let win = true;
@@ -143,7 +164,6 @@ export default function Sudoku({
 
     if (win && Object.keys(cells).length > 0) {
       setStatus(GameStatus.GameSolved);
-      setIsGameSolvedModalOpen(true);
     }
   }, [cells]);
 
@@ -233,8 +253,19 @@ export default function Sudoku({
             notes={notes}
             chosen={chosenCell}
             status={status}
+            chances={chances}
             onCellClick={handleCellChosen}
             onResumeClick={togglePauseClick}
+            onNewGameClick={() => {
+              newGame(difficulty);
+            }}
+            onSecondChanceClick={() => {
+              if (chances > 0) {
+                setMistakes((prev) => prev - 1);
+                setChances((prev) => prev - 1);
+                setStatus(GameStatus.Playing);
+              }
+            }}
           />
         </div>
         <div className="ml-8 hidden sm:block sm:w-48">
@@ -255,23 +286,6 @@ export default function Sudoku({
           />
         </div>
       </div>
-      <GameSolvedModal
-        open={isGameSolvedModalOpen}
-        playtime={playtime}
-        handleClose={() => {
-          setIsGameSolvedModalOpen(false);
-        }}
-        handleNewGame={() => {
-          newGame(difficulty);
-          setIsGameSolvedModalOpen(false);
-        }}
-      />
-      <GameOverModal
-        open={isGameOverModalOpen}
-        handleClose={() => {
-          setIsGameOverModalOpen(false);
-        }}
-      />
       <NewGameModal
         open={isNewGameModalOpen}
         handleClose={() => {

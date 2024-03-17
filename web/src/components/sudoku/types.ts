@@ -42,6 +42,8 @@ export type GameState = {
   difficulty: Difficulty;
   deprecated: number;
   mistakes: number;
+  hints: number;
+  chances: number;
 };
 
 export type CellValue = {
