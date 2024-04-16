@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { sendGTMEvent } from '@next/third-parties/google';
 import { PlayIcon, PauseIcon } from '@heroicons/react/20/solid';
 import sudoku from '@/lib/sudoku';
 import { Difficulty, Theme, GameStatus, CellValue } from './types';
@@ -98,6 +99,7 @@ export default function Sudoku({
     setMistakes(0);
     setChosenCell(-1);
     setStatus(GameStatus.Playing);
+    sendGTMEvent({ event: 'level_start' });
   };
 
   // watch game status to update timer
