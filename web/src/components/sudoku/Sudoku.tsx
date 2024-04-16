@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { PlayIcon, PauseIcon } from '@heroicons/react/20/solid';
 import sudoku from '@/lib/sudoku';
@@ -36,6 +36,8 @@ function getThemed(theme: Theme) {
   }
   return themeClassic;
 }
+
+const BoardMemoized = memo(Board);
 
 type Props = {
   initTheme: Theme;
@@ -225,6 +227,18 @@ export default function Sudoku({
     [difficulty]
   );
 
+  const handleNewGame = useCallback(() => {
+    newGame(difficulty);
+  }, [difficulty]);
+
+  const handleSecondChance = useCallback(() => {
+    if (chances > 0) {
+      setMistakes((prev) => prev - 1);
+      setChances((prev) => prev - 1);
+      setStatus(GameStatus.Playing);
+    }
+  }, []);
+
   return (
     <>
       <div className="flex items-center justify-center font-medium text-gray-500 dark:text-gray-200">
@@ -249,7 +263,7 @@ export default function Sudoku({
       </div>
       <div className="mt-2 flex flex-row justify-center">
         <div className="w-full max-w-sm sm:w-[404px] sm:max-w-none">
-          <Board
+          <BoardMemoized
             themed={themed}
             cells={cells}
             notes={notes}
@@ -258,16 +272,8 @@ export default function Sudoku({
             chances={chances}
             onCellClick={handleCellChosen}
             onResumeClick={togglePauseClick}
-            onNewGameClick={() => {
-              newGame(difficulty);
-            }}
-            onSecondChanceClick={() => {
-              if (chances > 0) {
-                setMistakes((prev) => prev - 1);
-                setChances((prev) => prev - 1);
-                setStatus(GameStatus.Playing);
-              }
-            }}
+            onNewGameClick={handleNewGame}
+            onSecondChanceClick={handleSecondChance}
           />
         </div>
         <div className="ml-8 hidden sm:block sm:w-48">

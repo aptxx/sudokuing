@@ -6,6 +6,7 @@ import Square from '../common/Square';
 import { CellValue, GameStatus, Themed } from '../sudoku/types';
 import GameSolved from './GameSolved';
 import GameOver from './GameOver';
+import Loading from './Loading';
 
 function isRelated(chosenCell: number, target: number): boolean {
   if (chosenCell < 0 || chosenCell === undefined || chosenCell === target) {
@@ -94,6 +95,7 @@ export const Board = ({
         />
       );
     });
+
   return (
     <Square id="sudoku-board">
       <div className="relative grid h-full w-full text-2xl font-normal text-gray-700 dark:text-gray-200">
@@ -120,6 +122,11 @@ export const Board = ({
         {status == GameStatus.GameSolved && (
           <div className="absolute left-0 top-0 h-full w-full">
             <GameSolved open={true} onNewGameClick={() => onNewGameClick?.()} />
+          </div>
+        )}
+        {(!cells || Object.keys(cells).length == 0) && (
+          <div className="absolute left-0 top-0 h-full w-full">
+            <Loading open={true} />
           </div>
         )}
       </div>
