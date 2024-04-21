@@ -44,10 +44,10 @@ export type GameState = {
   mistakes: number;
   hints: number;
   chances: number;
-};
+}
 
 export type CellValue = {
   value: number; // user input
   answer: number;
   prefilled: boolean;
-};
+}

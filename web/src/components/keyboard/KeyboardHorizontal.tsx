@@ -36,7 +36,7 @@ export const KeyboardHorizontal = ({ themed, onClick, onNewGameClick }: Props) =
         </div>
       </Square>
       <Key
-        className="mt-2 h-8 w-full bg-gray-50 text-base hover:bg-gray-100 dark:bg-black dark:hover:bg-gray-800 md:h-10"
+        className="mt-2 h-10 w-full bg-gray-50 text-base hover:bg-gray-100 dark:bg-black dark:hover:bg-gray-800 md:h-10"
         key={'Backspace'}
         value={'Backspace'}
         onClick={onValueClick}
@@ -44,7 +44,7 @@ export const KeyboardHorizontal = ({ themed, onClick, onNewGameClick }: Props) =
         Delete
       </Key>
       <Key
-        className="mt-2 h-8 w-full bg-blue-500 text-base text-gray-100 hover:bg-blue-600 md:h-10"
+        className="mt-2 h-10 w-full bg-blue-500 text-base text-gray-100 hover:bg-blue-600 md:h-10"
         value=""
         onClick={(_) => onNewGameClick?.()}
       >

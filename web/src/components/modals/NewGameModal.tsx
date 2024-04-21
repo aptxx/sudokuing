@@ -14,20 +14,18 @@ export const NewGameModal = ({ open, handleClose, handleConfirm, handleCancel }:
         Creating a new game will clear the current puzzle.
       </p>
       <div className="mt-4 flex justify-center">
-        <button
-          type="button"
-          className="mx-2 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:bg-blue-600 sm:text-base"
+        <div
+          className="mx-2 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-blue-500 px-4 py-2 text-center text-sm font-medium text-white shadow-sm hover:cursor-pointer hover:bg-blue-600 sm:text-base"
           onClick={handleConfirm}
         >
           Yes
-        </button>
-        <button
-          type="button"
-          className="mx-2 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-slate-200 px-4 py-2 text-center text-sm font-medium text-black shadow-sm hover:bg-slate-400 sm:text-base"
+        </div>
+        <div
+          className="mx-2 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-slate-200 px-4 py-2 text-center text-sm font-medium text-black shadow-sm hover:cursor-pointer hover:bg-slate-400 sm:text-base"
           onClick={handleCancel}
         >
           No
-        </button>
+        </div>
       </div>
     </BaseModal>
   );

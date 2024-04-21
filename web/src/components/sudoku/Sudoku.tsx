@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { PlayIcon, PauseIcon } from '@heroicons/react/20/solid';
 import sudoku from '@/lib/sudoku';
@@ -15,10 +15,26 @@ import { loadGame, loadPlaytime, saveGame, savePlaytime } from './storage';
 import themeClassic from '@/app/(sudokus)/classic/[difficulty]/theme';
 import themeAlphabet from '@/app/(sudokus)/alphabet/[difficulty]/theme';
 import themeColor from '@/app/(sudokus)/color/[difficulty]/theme';
+import { GameState } from './types';
+import { RewardedAd } from '../common/dfp/RewardedAd';
+import { DFP_REWARDED_ADUNIT } from '@/config/setting';
 
 const DEFAULT_MAX_MISTAKES = 2;
 const DEFAULT_HINTS = 2;
 const DEFAULT_CHANCES = 2;
+
+function validateGameState(state: GameState): boolean {
+  if (!state) {
+    return false;
+  }
+  if (state.deprecated) {
+    return false;
+  }
+  if (!state.cells || Object.keys(state.cells).length == 0) {
+    return false;
+  }
+  return true;
+}
 
 function formatPlaytime(n: number) {
   const minutes = Math.floor(n / 60);
@@ -63,6 +79,8 @@ export default function Sudoku({
   const [playtime, setPlaytime] = useState(0); // seconds
   const [mistakes, setMistakes] = useState(0);
   const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
+  const [rewardedKey, setRewardedKey] = useState<number>(0);
+  const rewardedCaller = useRef<() => void>();
 
   const themed = getThemed(initTheme);
 
@@ -117,16 +135,16 @@ export default function Sudoku({
   }, [status, playtimeIntervalId, clearPlaytimeInterval]);
 
   useEffect(() => {
-    const gameState = loadGame(storagePrefix);
-    if (gameState && !gameState.deprecated) {
-      setPuzzle(gameState.puzzle);
-      setCells(gameState.cells);
-      setNotes(gameState.notes || []);
-      setDifficulty(gameState.difficulty || Difficulty.Easy);
+    const gstate = loadGame(storagePrefix);
+    if (gstate && validateGameState(gstate)) {
+      setPuzzle(gstate.puzzle);
+      setCells(gstate.cells);
+      setNotes(gstate.notes || []);
+      setDifficulty(gstate.difficulty || Difficulty.Easy);
       setPlaytime(loadPlaytime(storagePrefix));
-      setHints(gameState.hints || DEFAULT_HINTS);
-      setChances(gameState.chances || DEFAULT_CHANCES);
-      setMistakes(gameState.mistakes || 0);
+      setHints(gstate.hints || DEFAULT_HINTS);
+      setChances(gstate.chances || DEFAULT_CHANCES);
+      setMistakes(gstate.mistakes || 0);
     } else {
       newGame(difficulty);
     }
@@ -232,11 +250,39 @@ export default function Sudoku({
   }, [difficulty]);
 
   const handleSecondChance = useCallback(() => {
+    const f = rewardedCaller.current;
+    if (f) {
+      f();
+      return;
+    }
+
+    setTimeout(() => {
+      const f2 = rewardedCaller.current;
+      if (f2) {
+        f2();
+      } else {
+        goSecondChance();
+      }
+    }, 1000);
+  }, []);
+
+  const goSecondChance = useCallback(() => {
     if (chances > 0) {
       setMistakes((prev) => prev - 1);
       setChances((prev) => prev - 1);
       setStatus(GameStatus.Playing);
     }
+  }, [chances]);
+
+  const handleRewardedReady = useCallback((event: any) => {
+    rewardedCaller.current = () => {
+      event.makeRewardedVisible();
+    };
+  }, []);
+
+  const handleRewardedClosed = useCallback((event: any) => {
+    rewardedCaller.current = undefined;
+    setRewardedKey((prev) => prev + 1);
   }, []);
 
   return (
@@ -252,13 +298,13 @@ export default function Sudoku({
         <div className="ml-4">Mistakes: {`${mistakes}`}</div>
         <div className="ml-4 flex items-center justify-center">
           <span>{formatPlaytime(playtime)}</span>
-          <button className="ml-1" onClick={togglePauseClick}>
+          <div className="ml-1 hover:cursor-pointer" onClick={togglePauseClick}>
             {status === GameStatus.Paused ? (
               <PlayIcon className="h-4 w-4" />
             ) : (
               <PauseIcon className="h-4 w-4" />
             )}
-          </button>
+          </div>
         </div>
       </div>
       <div className="mt-2 flex flex-row justify-center">
@@ -306,6 +352,13 @@ export default function Sudoku({
         handleCancel={() => {
           setIsNewGameModalOpen(false);
         }}
+      />
+      <RewardedAd
+        key={rewardedKey}
+        adunit={DFP_REWARDED_ADUNIT}
+        onRewardReady={handleRewardedReady}
+        onRewardGranted={goSecondChance}
+        onRewardClosed={handleRewardedClosed}
       />
     </>
   );

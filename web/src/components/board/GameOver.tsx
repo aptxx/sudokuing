@@ -1,3 +1,4 @@
+import { FilmIcon } from '@heroicons/react/20/solid';
 import Overlay from '../common/Overlay';
 
 export default function GameOver({
@@ -20,14 +21,14 @@ export default function GameOver({
             You were so close to winning this time!
           </p>
           {showNewGameButton && (
-            <div className="mt-4 flex justify-center text-xs font-bold">
-              <button
-                type="button"
-                className="mx-2 w-full rounded-md border border-transparent bg-blue-500 px-2 py-2 text-center text-white shadow-sm hover:bg-blue-600"
-                onClick={onSecondChanceClick}
-              >
-                One More Chance
-              </button>
+            <div
+              className="mx-2 mt-4 flex w-full items-center justify-center rounded border border-transparent bg-blue-500 px-2 py-2 text-xs font-bold text-white shadow-sm hover:cursor-pointer hover:bg-blue-600"
+              onClick={onSecondChanceClick}
+            >
+              <span>One More Chance</span>
+              <span className="ml-2">
+                <FilmIcon className="h-6 w-6" />
+              </span>
             </div>
           )}
           <div className="mt-2 flex justify-center text-xs">

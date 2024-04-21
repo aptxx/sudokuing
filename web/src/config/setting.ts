@@ -5,3 +5,5 @@ export const SITE_KEYWORDS = 'sudokuing, sudoku, sudoku online, web sudoku, sudo
 
 export const GOOGLE_MEASUREMENT_ID = '';
 export const GOOGLE_GTM_ID = 'GTM-M8ZPDJWT';
+
+export const DFP_REWARDED_ADUNIT =  process.env.NODE_ENV === 'production' ? '/22831606382/rewarded_web' : '/22639388115/rewarded_web_example'

@@ -147,17 +147,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        {process.env.NODE_ENV === 'production' && <GoogleTagManager gtmId={GOOGLE_GTM_ID} />}
-        {process.env.NODE_ENV === 'production' && (
-          <Script
-            async
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3943160950859903"
-            crossOrigin="anonymous"
-          />
-        )}
-        {process.env.NODE_ENV === 'production' && (
-          <Script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" />
-        )}
+        <GoogleTagManager gtmId={GOOGLE_GTM_ID} />
+        <Script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" />
+        <Script
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              var googletag = window.googletag || { cmd: [] }
+          `,
+          }}
+        />
       </head>
 
       <body className={`${OpenSans.className} dark:bg-black dark:text-gray-200`}>
