@@ -17,7 +17,8 @@ import themeAlphabet from '@/app/(sudokus)/alphabet/[difficulty]/theme';
 import themeColor from '@/app/(sudokus)/color/[difficulty]/theme';
 import { GameState } from './types';
 import { RewardedAd } from '../common/dfp/RewardedAd';
-import { DFP_REWARDED_ADUNIT } from '@/config/setting';
+import { DFP_BANNER_ADUNIT, DFP_REWARDED_ADUNIT } from '@/config/setting';
+import BannerAd from '../common/dfp/BannerAd';
 
 const DEFAULT_MAX_MISTAKES = 2;
 const DEFAULT_HINTS = 2;
@@ -275,6 +276,7 @@ export default function Sudoku({
   }, [chances]);
 
   const handleRewardedReady = useCallback((event: any) => {
+    console.log('DFP: rewarded ad ready');
     rewardedCaller.current = () => {
       event.makeRewardedVisible();
     };
@@ -360,6 +362,14 @@ export default function Sudoku({
         onRewardGranted={goSecondChance}
         onRewardClosed={handleRewardedClosed}
       />
+      <div className="mt-8 flex items-center justify-center">
+        <BannerAd
+          id="div-gpt-0"
+          style={{ width: 300, height: 50 }}
+          adunit={DFP_BANNER_ADUNIT}
+          sizes={[300, 50]}
+        />
+      </div>
     </>
   );
 }
