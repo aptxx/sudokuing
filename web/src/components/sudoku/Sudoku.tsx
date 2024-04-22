@@ -76,7 +76,7 @@ export default function Sudoku({
   const [hints, setHints] = useState(DEFAULT_HINTS);
   const [chances, setChances] = useState(DEFAULT_CHANCES);
   const [chosenCell, setChosenCell] = useState(-1);
-  const [playtimeIntervalId, setPlaytimeIntervalId] = useState<any>(null);
+  const playtimeIntervalId = useRef<any>(null);
   const [playtime, setPlaytime] = useState(0); // seconds
   const [mistakes, setMistakes] = useState(0);
   const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
@@ -86,14 +86,12 @@ export default function Sudoku({
   const themed = getThemed(initTheme);
 
   const clearPlaytimeInterval = useCallback(() => {
-    playtimeIntervalId && clearInterval(playtimeIntervalId);
-    setPlaytimeIntervalId(null);
-  }, [playtimeIntervalId, setPlaytimeIntervalId]);
+    const iid = playtimeIntervalId.current;
+    playtimeIntervalId.current = null;
+    clearInterval(iid);
+  }, []);
 
   const newTimer = useCallback(() => {
-    if (!!playtimeIntervalId) {
-      return;
-    }
     let prev = Date.now();
     let newIntervalId = setInterval(() => {
       const now = Date.now();
@@ -103,8 +101,8 @@ export default function Sudoku({
         setPlaytime((passed) => Math.max(0, passed + delta));
       }
     }, 100);
-    setPlaytimeIntervalId(newIntervalId);
-  }, [setPlaytime, playtimeIntervalId, setPlaytimeIntervalId]);
+    playtimeIntervalId.current = newIntervalId;
+  }, []);
 
   const newGame = (difficulty: Difficulty) => {
     const newPuzzle = generatePuzzle(difficulty);
@@ -120,6 +118,7 @@ export default function Sudoku({
     setMistakes(0);
     setChosenCell(-1);
     setStatus(GameStatus.Playing);
+    newTimer();
     sendGTMEvent({ event: 'level_start' });
   };
 
@@ -129,11 +128,11 @@ export default function Sudoku({
       clearPlaytimeInterval();
       return;
     }
-    if (playtimeIntervalId) {
+    if (playtimeIntervalId.current) {
       return;
     }
     newTimer();
-  }, [status, playtimeIntervalId, clearPlaytimeInterval]);
+  }, [status]);
 
   useEffect(() => {
     const gstate = loadGame(storagePrefix);
