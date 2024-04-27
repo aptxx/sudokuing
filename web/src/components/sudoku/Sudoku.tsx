@@ -363,7 +363,7 @@ export default function Sudoku({
       />
       <div className="mt-8"></div>
       <BannerAd
-        className="max-h-[90px] w-full overflow-hidden"
+        className="flex max-h-[90px] w-full items-center justify-center overflow-hidden"
         id="div-gpt-ad-0"
         adunit={DFP_BANNER_ADUNIT}
         sizes={[[468, 60], [728, 90], 'fluid']}

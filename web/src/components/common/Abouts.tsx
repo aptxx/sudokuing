@@ -1,4 +1,5 @@
-import { SITE_TITLE } from '@/config/setting';
+import { DFP_BANNER_ADUNIT, SITE_TITLE } from '@/config/setting';
+import BannerAd from './dfp/BannerAd';
 
 export default function Abouts() {
   return (
@@ -27,6 +28,19 @@ export default function Abouts() {
           <b>Sudokuing(Sudoku'ing)</b> is an online Sudoku gaming website that focuses on providing
           a user-friendly, variety of themed Sudoku puzzles for everyone to enjoy.
         </p>
+      </div>
+      <div className="x-container mb-12">
+        <BannerAd
+          className="flex max-h-[90px] w-full items-center justify-center overflow-hidden"
+          id="div-gpt-ad-1"
+          adunit={DFP_BANNER_ADUNIT}
+          sizes={[[468, 60], [728, 90], 'fluid']}
+          sizeMapping={[
+            { viewport: [1000, 600], sizes: [[468, 60], [728, 90], 'fluid'] },
+            { viewport: [700, 400], sizes: [[468, 60], 'fluid'] },
+            { viewport: [0, 0], sizes: ['fluid'] },
+          ]}
+        />
       </div>
     </>
   );
