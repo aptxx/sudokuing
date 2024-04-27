@@ -361,12 +361,16 @@ export default function Sudoku({
         onRewardGranted={goSecondChance}
         onRewardClosed={handleRewardedClosed}
       />
-      <div className="mt-8 flex items-center justify-center">
+      <div className="mt-8 max-h-[90px] overflow-x-auto">
         <BannerAd
           id="div-gpt-0"
-          style={{ width: 300, height: 50 }}
           adunit={DFP_BANNER_ADUNIT}
-          sizes={[300, 50]}
+          sizes={[[468, 60], [728, 90], 'fluid']}
+          sizeMapping={[
+            { viewport: [1000, 600], sizes: [[468, 60], [728, 90], 'fluid'] },
+            { viewport: [700, 400], sizes: [[468, 60], 'fluid'] },
+            { viewport: [0, 0], sizes: ['fluid'] },
+          ]}
         />
       </div>
     </>

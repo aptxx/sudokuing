@@ -7,7 +7,7 @@ export type Props = {
   id: string;
   adunit: string;
   sizes: any[];
-  sizeMapping?: SizeMapping;
+  sizeMapping?: SizeMapping[];
   collapseEmptyDivs?: boolean;
 };
 
@@ -27,18 +27,21 @@ export const BannerAd = ({
       const slot = googletag.defineSlot(adunit, sizes, id).addService(googletag.pubads());
 
       if (sizeMapping && Object.keys(sizeMapping).length > 0) {
-        const mapping = googletag.sizeMapping();
-        for (const [key, value] of Object.entries(sizeMapping)) {
-          mapping.addSize(key, value);
-        }
-        mapping.build();
-        slot.defineSizeMapping(mapping);
+        let mapping = googletag.sizeMapping();
+        Object.entries(sizeMapping).map(([_, value]) => {
+          mapping.addSize(value.viewport, value.sizes);
+        });
+        slot.defineSizeMapping(mapping.build());
       }
 
       collapseEmptyDivs && slot.setCollapseEmptyDiv(true);
 
       googletag.pubads().enableSingleRequest();
       googletag.enableServices();
+
+      cleanup = () => {
+        googletag.destroySlots([slot]);
+      };
     });
 
     googletag.cmd.push(function () {
