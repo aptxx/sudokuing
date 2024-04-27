@@ -34,11 +34,12 @@ export default function Abouts() {
           className="flex max-h-[90px] w-full items-center justify-center overflow-hidden"
           id="div-gpt-ad-1"
           adunit={DFP_BANNER_ADUNIT}
-          sizes={[[970, 90], [468, 60], [728, 90], 'fluid']}
+          sizes={[[300, 50], [468, 60], [728, 90], [970, 90], 'fluid']}
           sizeMapping={[
-            { viewport: [1200, 600], sizes: [[970, 90], [468, 60], [728, 90], 'fluid'] },
+            { viewport: [1200, 600], sizes: [[468, 60], [728, 90], [970, 90], 'fluid'] },
             { viewport: [1000, 600], sizes: [[468, 60], [728, 90], 'fluid'] },
-            { viewport: [700, 400], sizes: [[468, 60], 'fluid'] },
+            { viewport: [700, 400], sizes: [[468, 60], [300, 50], 'fluid'] },
+            { viewport: [360, 400], sizes: [[300, 50], 'fluid'] },
             { viewport: [0, 0], sizes: ['fluid'] },
           ]}
         />
