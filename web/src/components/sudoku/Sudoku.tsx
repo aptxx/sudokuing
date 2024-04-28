@@ -22,7 +22,7 @@ import BannerAd from '../common/dfp/BannerAd';
 
 const DEFAULT_MAX_MISTAKES = 2;
 const DEFAULT_HINTS = 2;
-const DEFAULT_CHANCES = 2;
+const DEFAULT_CHANCES = 64;
 
 function validateGameState(state: GameState): boolean {
   if (!state) {
@@ -263,7 +263,7 @@ export default function Sudoku({
       } else {
         goSecondChance();
       }
-    }, 1000);
+    }, 500);
   }, []);
 
   const goSecondChance = useCallback(() => {
