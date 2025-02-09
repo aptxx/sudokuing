@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
-import { Open_Sans } from 'next/font/google';
 import Script from 'next/script';
 import {
   BASE_URL,
@@ -57,12 +56,6 @@ export async function generateMetadata(): Promise<Metadata> {
     ],
   };
 }
-
-const OpenSans = Open_Sans({
-  subsets: ['latin'],
-  display: 'swap',
-  style: 'normal',
-});
 
 const DynamicDarkmodeSwitch = dynamic(() => import('@/components/common/DarkmodeSwitch'), {
   loading: () => <span>Dark Mode</span>,
@@ -148,7 +141,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <GoogleTagManager gtmId={GOOGLE_GTM_ID} />
-        <Script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" />
+        <Script strategy="lazyOnload" src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" />
         <Script
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
@@ -159,7 +152,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
 
-      <body className={`${OpenSans.className} dark:bg-black dark:text-gray-200`}>
+      <body className={`dark:bg-black dark:text-gray-200`}>
         <Header />
         <div id="root" className="mt-4">
           {children}
