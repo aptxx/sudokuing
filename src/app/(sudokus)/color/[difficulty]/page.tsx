@@ -15,12 +15,14 @@ export async function generateMetadata(
   { params, searchParams }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  return generateBaseMetadata(Theme.Color, params.difficulty as Difficulty);
+  const difficulty = params.difficulty as Difficulty;
+  return generateBaseMetadata(Theme.Color, difficulty as Difficulty);
 }
 
-export default function Page({ params, searchParams }: Props) {
+export default async function Page({ params, searchParams }: Props) {
   const theme = Theme.Color;
-  const difficulty = params.difficulty as Difficulty;
+  const { difficulty: _difficulty } = await params;
+  const difficulty = _difficulty as Difficulty;
   const jsonLd = generateIinkedData(theme, difficulty);
 
   return (

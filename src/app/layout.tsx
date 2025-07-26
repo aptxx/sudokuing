@@ -10,6 +10,7 @@ import {
 } from '@/config/setting';
 import '@/styles/globals.css';
 import { GoogleTagManager } from '@next/third-parties/google';
+import { FaGithub } from 'react-icons/fa';
 
 export const runtime = 'edge';
 
@@ -65,21 +66,29 @@ const Header = () => {
   return (
     <div className="static flex h-14 w-full items-center justify-between bg-default-color text-black shadow dark:bg-black dark:text-gray-200">
       <div className="x-container flex w-full items-center justify-between">
-        <div className="flex items-center justify-between font-bold">
+        <div className="flex items-center justify-between gap-2 font-bold">
           <a href={BASE_URL} title={SITE_TITLE} rel="home">
             <span className="text-xl tracking-wider no-underline sm:text-2xl">{SITE_TITLE}</span>
           </a>
           <a href={`${BASE_URL}/easy`} title={SITE_TITLE} rel="Classic Sudoku">
-            <span className="ml-4 text-sm tracking-wider no-underline">Classic</span>
+            <span className="text-sm tracking-wider no-underline">Classic</span>
           </a>
           <a href={`${BASE_URL}/alphabet/easy`} title={SITE_TITLE} rel="Alphabet Sudoku">
-            <span className="ml-4 text-sm tracking-wider no-underline">Alphabet</span>
+            <span className="text-sm tracking-wider no-underline">Alphabet</span>
           </a>
           <a href={`${BASE_URL}/color/easy`} title={SITE_TITLE} rel="Color Sudoku">
-            <span className="ml-4 text-sm tracking-wider no-underline">Color</span>
+            <span className="text-sm tracking-wider no-underline">Color</span>
           </a>
         </div>
-        <div>
+        <div className="flex items-center justify-between gap-1">
+          <a
+            href="https://github.com/aptxx/sudokuing"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="GitHub"
+          >
+            <FaGithub size={'20'} />
+          </a>
           <DynamicDarkmodeSwitch />
         </div>
       </div>
