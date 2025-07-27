@@ -1,4 +1,4 @@
-export default function Page() {
+export default async function Page() {
   return (
     <div className="all-revert-full">
       <h1>About Us</h1>

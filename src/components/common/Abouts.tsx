@@ -25,8 +25,8 @@ export default function Abouts() {
       <div className="x-container post-block mb-12">
         <h2>About {SITE_TITLE}</h2>
         <p>
-          <b>Sudokuing(Sudoku'ing)</b> is an online Sudoku gaming website that focuses on providing
-          a user-friendly, variety of themed Sudoku puzzles for everyone to enjoy.
+          <b>Sudokuing(Sudoku&apos;ing)</b> is an online Sudoku gaming website that focuses on
+          providing a user-friendly, variety of themed Sudoku puzzles for everyone to enjoy.
         </p>
       </div>
       <div className="x-container mb-12">

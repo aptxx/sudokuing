@@ -5,19 +5,18 @@ import { capitalize } from '@/lib/utils';
 import { Metadata, ResolvingMetadata } from 'next';
 
 type Props = {
-  params: { difficulty: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ difficulty: string }>;
 };
 
 export async function generateMetadata(
-  { params, searchParams }: Props,
+  { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { difficulty } = await params;
   return generateBaseMetadata(Theme.Classic, difficulty as Difficulty);
 }
 
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page({ params }: Props) {
   const theme = Theme.Classic;
   const { difficulty: _difficulty } = await params;
   const difficulty = _difficulty as Difficulty;
@@ -63,20 +62,20 @@ export default async function Page({ params, searchParams }: Props) {
         <h2>Tips</h2>
         <div>
           <p className="mb-2">
-            Sudoku is a game of logic and patience. With practice, you'll improve your pattern
+            Sudoku is a game of logic and patience. With practice, you&apos;ll improve your pattern
             recognition and deduction skills, allowing you to solve even the most challenging
             puzzles. Happy Sudoku solving!
           </p>
           <ul>
             <li>
               Look for squares that have only one possible number based on the existing numbers in
-              their row, column, and 3x3 box. These "unique candidates" can be filled in
+              their row, column, and 3x3 box. These &quot;unique candidates&quot; can be filled in
               immediately, providing valuable clues for the rest of the puzzle.
             </li>
             <li>
               Use logical deduction to eliminate possibilities. Look for numbers that are already
               present in a row, column, or 3x3 box, and eliminate them as options for other empty
-              squares within that unit. Repeat this process until you've narrowed down the
+              squares within that unit. Repeat this process until you&apos;ve narrowed down the
               possibilities.
             </li>
             <li>

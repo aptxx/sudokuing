@@ -21,7 +21,7 @@ export default function GameSolved({
             Congratulations!
           </h3>
           <p className="pt-2 text-sm font-bold text-gray-500 dark:text-gray-300">
-            Puzzle is solved. You're an amazing player!
+            Puzzle is solved. You&apos;re an amazing player!
           </p>
           <div className="mt-2 flex justify-center text-xs">
             <span

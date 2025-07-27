@@ -150,8 +150,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <GoogleTagManager gtmId={GOOGLE_GTM_ID} />
-        <Script strategy="lazyOnload" src="https://securepubads.g.doubleclick.net/tag/js/gpt.js" />
         <Script
+          id="google-gpt"
+          strategy="lazyOnload"
+          src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"
+        />
+        <Script
+          id="google-gpt-init"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `

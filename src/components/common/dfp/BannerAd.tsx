@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { SizeMapping } from './types';
 
 export type Props = {
@@ -22,7 +22,17 @@ export const BannerAd = ({
   collapseEmptyDivs,
   sizeMapping,
 }: Props) => {
+  const initialValues = useRef({
+    id,
+    adunit,
+    sizes,
+    collapseEmptyDivs,
+    sizeMapping,
+  }).current;
+
   useEffect(() => {
+    const { id, adunit, sizes, collapseEmptyDivs, sizeMapping } = initialValues;
+
     let cleanup = () => {};
     let googletag = window.googletag || { cmd: [] };
     googletag.cmd.push(() => {
@@ -53,7 +63,7 @@ export const BannerAd = ({
     return () => {
       cleanup();
     };
-  }, []);
+  }, [initialValues]);
   return <div id={id} className={className} style={style}></div>;
 };
 

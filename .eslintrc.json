@@ -1,4 +1,7 @@
 {
-  "extends": ["eslint:recommended", "plugin:node/recommended", "prettier", "next/core-web-vitals"],
-  "plugins": ["node", "prettier"]
+  "extends": ["next/core-web-vitals"],
+  "plugins": ["prettier", "unused-imports"],
+  "rules": {
+    "unused-imports/no-unused-imports": "warn"
+  }
 }

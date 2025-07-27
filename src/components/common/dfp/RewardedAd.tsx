@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export type Props = {
   adunit: string;
@@ -10,7 +10,16 @@ export type Props = {
 };
 
 export const RewardedAd = ({ adunit, onRewardReady, onRewardGranted, onRewardClosed }: Props) => {
+  const initialValues = useRef({
+    adunit,
+    onRewardReady,
+    onRewardGranted,
+    onRewardClosed,
+  }).current;
+
   useEffect(() => {
+    const { adunit, onRewardReady, onRewardGranted, onRewardClosed } = initialValues;
+
     let cleanup = () => {};
     let googletag = window.googletag || { cmd: [] };
     googletag.cmd.push(() => {
@@ -45,7 +54,7 @@ export const RewardedAd = ({ adunit, onRewardReady, onRewardGranted, onRewardClo
     return () => {
       cleanup();
     };
-  }, []);
+  }, [initialValues]);
 
   return <ins className="hidden"></ins>;
 };

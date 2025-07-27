@@ -104,23 +104,26 @@ export default function Sudoku({
     playtimeIntervalId.current = newIntervalId;
   }, []);
 
-  const newGame = (difficulty: Difficulty) => {
-    const newPuzzle = generatePuzzle(difficulty);
-    const newPuzzleSolved = sudoku.solve(newPuzzle) || '';
-    setPuzzle(newPuzzle);
-    setCells(puzzleToCells(newPuzzle, newPuzzleSolved));
-    setNotes({});
-    setDifficulty(difficulty);
-    setHints(DEFAULT_HINTS);
-    setChances(DEFAULT_CHANCES);
-    clearPlaytimeInterval();
-    setPlaytime(0);
-    setMistakes(0);
-    setChosenCell(-1);
-    setStatus(GameStatus.Playing);
-    newTimer();
-    sendGTMEvent({ event: 'level_start' });
-  };
+  const newGame = useCallback(
+    (difficulty: Difficulty) => {
+      const newPuzzle = generatePuzzle(difficulty);
+      const newPuzzleSolved = sudoku.solve(newPuzzle) || '';
+      setPuzzle(newPuzzle);
+      setCells(puzzleToCells(newPuzzle, newPuzzleSolved));
+      setNotes({});
+      setDifficulty(difficulty);
+      setHints(DEFAULT_HINTS);
+      setChances(DEFAULT_CHANCES);
+      clearPlaytimeInterval();
+      setPlaytime(0);
+      setMistakes(0);
+      setChosenCell(-1);
+      setStatus(GameStatus.Playing);
+      newTimer();
+      sendGTMEvent({ event: 'level_start' });
+    },
+    [clearPlaytimeInterval, newTimer]
+  );
 
   // watch game status to update timer
   useEffect(() => {
@@ -132,7 +135,7 @@ export default function Sudoku({
       return;
     }
     newTimer();
-  }, [status]);
+  }, [status, clearPlaytimeInterval, newTimer]);
 
   useEffect(() => {
     const gstate = loadGame(storagePrefix);
@@ -152,7 +155,7 @@ export default function Sudoku({
     return () => {
       clearPlaytimeInterval();
     };
-  }, []);
+  }, [storagePrefix, difficulty, newGame, clearPlaytimeInterval]);
 
   useEffect(() => {
     saveGame(storagePrefix, {
@@ -169,7 +172,7 @@ export default function Sudoku({
 
   useEffect(() => {
     savePlaytime(playtime, storagePrefix);
-  }, [playtime]);
+  }, [playtime, storagePrefix]);
 
   useEffect(() => {
     if (mistakes > DEFAULT_MAX_MISTAKES) {
@@ -247,7 +250,15 @@ export default function Sudoku({
 
   const handleNewGame = useCallback(() => {
     newGame(difficulty);
-  }, [difficulty]);
+  }, [newGame, difficulty]);
+
+  const goSecondChance = useCallback(() => {
+    if (chances > 0) {
+      setMistakes((prev) => prev - 1);
+      setChances((prev) => prev - 1);
+      setStatus(GameStatus.Playing);
+    }
+  }, [chances]);
 
   const handleSecondChance = useCallback(() => {
     const f = rewardedCaller.current;
@@ -264,15 +275,7 @@ export default function Sudoku({
         goSecondChance();
       }
     }, 500);
-  }, []);
-
-  const goSecondChance = useCallback(() => {
-    if (chances > 0) {
-      setMistakes((prev) => prev - 1);
-      setChances((prev) => prev - 1);
-      setStatus(GameStatus.Playing);
-    }
-  }, [chances]);
+  }, [goSecondChance]);
 
   const handleRewardedReady = useCallback((event: any) => {
     console.log('DFP: rewarded ad ready');
