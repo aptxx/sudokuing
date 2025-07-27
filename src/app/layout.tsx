@@ -12,8 +12,6 @@ import '@/styles/globals.css';
 import { GoogleTagManager } from '@next/third-parties/google';
 import { FaGithub } from 'react-icons/fa';
 
-export const runtime = 'edge';
-
 export async function generateMetadata(): Promise<Metadata> {
   const baseURL = new URL(BASE_URL);
 
