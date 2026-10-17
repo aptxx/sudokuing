@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import dynamic from 'next/dynamic';
 import Script from 'next/script';
 import {
@@ -18,15 +18,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: baseURL,
     title: {
-      default: `${SITE_TITLE} - Free Sudoku Online | Sudokuing`,
-      template: '%s - Free Sudoku Online | Sudokuing',
+      default: 'Free Sudoku Online — Classic, Alphabet & Color Sudoku | Sudokuing',
+      template: '%s | Sudokuing',
     },
     keywords: SITE_KEYWORDS,
     description: SITE_DESCRIPTION,
     authors: [{ name: baseURL.host, url: BASE_URL }],
-    viewport: 'width=device-width, initial-scale=1',
     robots: 'index',
-    themeColor: '#FFFFFF',
     manifest: '/manifest.json',
     openGraph: {
       type: 'website',
@@ -34,14 +32,9 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: 'en_US',
       url: BASE_URL,
       description: SITE_DESCRIPTION,
-      images: [
-        {
-          url: `${BASE_URL}/opengraph-image.png`,
-          width: 512,
-          height: 512,
-          alt: SITE_TITLE,
-        },
-      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
     },
     appleWebApp: {
       title: SITE_TITLE,
@@ -56,6 +49,15 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' },
+  ],
+};
+
 const DynamicDarkmodeSwitch = dynamic(() => import('@/components/common/DarkmodeSwitch'), {
   loading: () => <span>Dark Mode</span>,
 });
@@ -68,13 +70,13 @@ const Header = () => {
           <a href={BASE_URL} title={SITE_TITLE} rel="home">
             <span className="text-xl tracking-wider no-underline sm:text-2xl">{SITE_TITLE}</span>
           </a>
-          <a href={`${BASE_URL}/easy`} title={SITE_TITLE} rel="Classic Sudoku">
+          <a href={`${BASE_URL}/easy`} title="Classic Sudoku">
             <span className="text-sm tracking-wider no-underline">Classic</span>
           </a>
-          <a href={`${BASE_URL}/alphabet/easy`} title={SITE_TITLE} rel="Alphabet Sudoku">
+          <a href={`${BASE_URL}/alphabet/easy`} title="Alphabet Sudoku">
             <span className="text-sm tracking-wider no-underline">Alphabet</span>
           </a>
-          <a href={`${BASE_URL}/color/easy`} title={SITE_TITLE} rel="Color Sudoku">
+          <a href={`${BASE_URL}/color/easy`} title="Color Sudoku">
             <span className="text-sm tracking-wider no-underline">Color</span>
           </a>
         </div>
@@ -145,8 +147,14 @@ const Footer = () => {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Set the theme class before first paint to avoid a light-mode flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var s=localStorage.getItem('color-scheme');var d=s?s==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark')}}catch(e){}`,
+          }}
+        />
         <GoogleTagManager gtmId={GOOGLE_GTM_ID} />
         <Script
           id="google-gpt"

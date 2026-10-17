@@ -16,7 +16,7 @@ const theme = {
       'text-red-500': status === ElementStatus.Incorrect,
     });
 
-    return <div className={classes}>{elements[key - 1]}</div>;
+    return <span className={classes}>{elements[key - 1]}</span>;
   },
   getElements(): Element[] {
     return elements.map((_, i) => {

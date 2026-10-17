@@ -1,24 +1,23 @@
 import { KeyboardBase } from './KeyboardBase';
 import { Key } from './Key';
 import Square from '../common/Square';
+import classnames from 'classnames';
 import { ElementStatus, Themed } from '../sudoku/types';
 
 type Props = {
   themed: Themed;
+  notesMode: boolean;
   onClick: (value: string) => void;
   onNewGameClick?: () => void;
 };
 
-export const Keyboard = ({ themed, onClick, onNewGameClick }: Props) => {
+export const Keyboard = ({ themed, notesMode, onClick, onNewGameClick }: Props) => {
   const onValueClick = (value: string) => {
     onClick?.(value);
   };
 
   return (
-    <KeyboardBase
-      className="w-full text-xl font-normal text-gray-600 dark:text-gray-200"
-      onClick={onValueClick}
-    >
+    <KeyboardBase className="w-full text-xl font-normal text-gray-600 dark:text-gray-200">
       <div className="flex w-full flex-col justify-center">
         <div className="flex items-center justify-around">
           {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((key) => (
@@ -37,14 +36,26 @@ export const Keyboard = ({ themed, onClick, onNewGameClick }: Props) => {
         </div>
         <div className="mt-2 flex items-center justify-around text-base">
           <Key
-            className="h-10 w-full bg-gray-50 hover:bg-gray-100 dark:bg-black dark:hover:bg-gray-800"
+            className={classnames(
+              'h-10 w-24 hover:bg-gray-100 dark:hover:bg-gray-800',
+              notesMode
+                ? 'bg-blue-500 text-gray-100'
+                : 'bg-gray-50 text-gray-600 dark:bg-black dark:text-gray-200'
+            )}
+            value="n"
+            onClick={onValueClick}
+          >
+            Notes
+          </Key>
+          <Key
+            className="ml-2 h-10 w-full bg-gray-50 hover:bg-gray-100 dark:bg-black dark:hover:bg-gray-800"
             value={'Backspace'}
             onClick={onValueClick}
           >
             Delete
           </Key>
           <Key
-            className="ml-4 h-10 w-full bg-blue-500 text-gray-100 hover:bg-blue-600"
+            className="ml-2 h-10 w-full bg-blue-500 text-gray-100 hover:bg-blue-600"
             value=""
             onClick={(_) => onNewGameClick?.()}
           >

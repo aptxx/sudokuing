@@ -18,10 +18,11 @@ export default function GameOver({
         <div className="text-center">
           <h3 className="leading text-xl font-bold text-gray-900 dark:text-gray-100">Game Over</h3>
           <p className="pt-2 text-sm font-bold text-gray-500 dark:text-gray-300">
-            You were so close to winning this time!
+            Too many mistakes — the puzzle got you this time.
           </p>
           {showNewGameButton && (
-            <div
+            <button
+              type="button"
               className="mx-2 mt-4 flex w-full items-center justify-center rounded border border-transparent bg-blue-500 px-2 py-2 text-xs font-bold text-white shadow-sm hover:cursor-pointer hover:bg-blue-600"
               onClick={onSecondChanceClick}
             >
@@ -29,15 +30,16 @@ export default function GameOver({
               <span className="ml-2">
                 <FilmIcon className="h-6 w-6" />
               </span>
-            </div>
+            </button>
           )}
           <div className="mt-2 flex justify-center text-xs">
-            <span
-              className="text-blue-600 hover:cursor-pointer dark:text-blue-400"
+            <button
+              type="button"
+              className="rounded text-blue-600 hover:cursor-pointer hover:underline dark:text-blue-400"
               onClick={onNewGameClick}
             >
               New Game
-            </span>
+            </button>
           </div>
         </div>
       </div>

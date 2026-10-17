@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import classnames from 'classnames';
 import { sendGTMEvent } from '@next/third-parties/google';
 import { PlayIcon, PauseIcon } from '@heroicons/react/20/solid';
 import sudoku from '@/lib/sudoku';
@@ -56,6 +57,12 @@ function getThemed(theme: Theme) {
 
 const BoardMemoized = memo(Board);
 
+type Confirm = {
+  title: string;
+  message: string;
+  action: () => void;
+};
+
 type Props = {
   initTheme: Theme;
   initDifficulty?: Difficulty;
@@ -71,17 +78,20 @@ export default function Sudoku({
   const [puzzle, setPuzzle] = useState('');
   const [cells, setCells] = useState({} as { [key: number]: CellValue });
   const [notes, setNotes] = useState({} as { [key: number]: number[] });
+  const [notesMode, setNotesMode] = useState(false);
   const [difficulty, setDifficulty] = useState(initDifficulty);
-  const [deprecated, setDeprecated] = useState(0);
   const [hints, setHints] = useState(DEFAULT_HINTS);
   const [chances, setChances] = useState(DEFAULT_CHANCES);
   const [chosenCell, setChosenCell] = useState(-1);
   const playtimeIntervalId = useRef<any>(null);
   const [playtime, setPlaytime] = useState(0); // seconds
   const [mistakes, setMistakes] = useState(0);
-  const [isNewGameModalOpen, setIsNewGameModalOpen] = useState(false);
+  const [confirm, setConfirm] = useState<Confirm | null>(null);
   const [rewardedKey, setRewardedKey] = useState<number>(0);
   const rewardedCaller = useRef<() => void>();
+  // Set while navigating away after abandoning a game, so no state update can
+  // re-save (and un-deprecate) the storage during the unload window.
+  const navigating = useRef(false);
 
   const themed = getThemed(initTheme);
 
@@ -111,6 +121,7 @@ export default function Sudoku({
       setPuzzle(newPuzzle);
       setCells(puzzleToCells(newPuzzle, newPuzzleSolved));
       setNotes({});
+      setNotesMode(false);
       setDifficulty(difficulty);
       setHints(DEFAULT_HINTS);
       setChances(DEFAULT_CHANCES);
@@ -142,12 +153,15 @@ export default function Sudoku({
     if (gstate && validateGameState(gstate)) {
       setPuzzle(gstate.puzzle);
       setCells(gstate.cells);
-      setNotes(gstate.notes || []);
+      setNotes(gstate.notes || {});
       setDifficulty(gstate.difficulty || Difficulty.Easy);
       setPlaytime(loadPlaytime(storagePrefix));
       setHints(gstate.hints || DEFAULT_HINTS);
       setChances(gstate.chances || DEFAULT_CHANCES);
       setMistakes(gstate.mistakes || 0);
+      // The effect cleanup above cleared the interval; keep the clock running.
+      clearPlaytimeInterval();
+      newTimer();
     } else {
       newGame(difficulty);
     }
@@ -155,20 +169,26 @@ export default function Sudoku({
     return () => {
       clearPlaytimeInterval();
     };
-  }, [storagePrefix, difficulty, newGame, clearPlaytimeInterval]);
+  }, [storagePrefix, difficulty, newGame, clearPlaytimeInterval, newTimer]);
 
+  // Never persist an empty board: on the first mount commit this effect sees
+  // the initial empty state, before loadGame's state has committed — writing
+  // then would clobber a valid save from localStorage.
   useEffect(() => {
+    if (Object.keys(cells).length === 0) {
+      return;
+    }
     saveGame(storagePrefix, {
       puzzle,
       cells,
       notes,
       difficulty,
-      deprecated,
+      deprecated: 0,
       mistakes,
       hints,
       chances,
     });
-  }, [storagePrefix, puzzle, cells, notes, difficulty, deprecated, mistakes, hints, chances]);
+  }, [storagePrefix, puzzle, cells, notes, difficulty, mistakes, hints, chances]);
 
   useEffect(() => {
     savePlaytime(playtime, storagePrefix);
@@ -194,11 +214,10 @@ export default function Sudoku({
 
   const handleCellChosen = useCallback(
     (pos: number) => {
-      if (!cells) {
+      if (navigating.current) {
         return;
       }
-      const clicked = cells[pos];
-      if (clicked && !clicked.prefilled) {
+      if (cells && cells[pos]) {
         setChosenCell(pos);
       }
     },
@@ -207,28 +226,69 @@ export default function Sudoku({
 
   const handleKeyClick = useCallback(
     (value: string) => {
+      if (navigating.current || status !== GameStatus.Playing) {
+        return;
+      }
+      if (value === 'n' || value === 'N') {
+        setNotesMode((prev) => !prev);
+        return;
+      }
       if (chosenCell === -1) {
         return;
       }
-      if (status === GameStatus.Playing) {
-        const newCells = { ...cells };
-        const newChosenCell = { ...newCells[chosenCell] };
-        if (value === 'Backspace') {
-          newChosenCell.value = 0;
-        } else if (value.length === 1 && value >= '1' && value <= '9') {
-          const newValue = Number(value);
-          newChosenCell.value = newValue;
-          if (newChosenCell.value !== newChosenCell.answer) {
-            setMistakes((v) => v + 1);
-          }
-        }
+      const target = cells[chosenCell];
+      if (!target || target.prefilled) {
+        return;
+      }
 
-        newCells[chosenCell] = newChosenCell;
+      if (value === 'Backspace') {
+        if (notesMode) {
+          setNotes((prev) => ({ ...prev, [chosenCell]: [] }));
+        } else {
+          const newCells = { ...cells };
+          newCells[chosenCell] = { ...target, value: 0 };
+          setCells(newCells);
+        }
+        return;
+      }
+
+      if (value.length === 1 && value >= '1' && value <= '9') {
+        const newValue = Number(value);
+        if (notesMode) {
+          setNotes((prev) => {
+            const current = prev[chosenCell] || [];
+            const next = current.includes(newValue)
+              ? current.filter((n) => n !== newValue)
+              : [...current, newValue].sort((a, b) => a - b);
+            return { ...prev, [chosenCell]: next };
+          });
+          return;
+        }
+        const newCells = { ...cells };
+        newCells[chosenCell] = { ...target, value: newValue };
         setCells(newCells);
+        setNotes((prev) => ({ ...prev, [chosenCell]: [] }));
+        if (newValue !== target.answer) {
+          setMistakes((v) => v + 1);
+        }
       }
     },
-    [status, chosenCell, cells, setCells]
+    [status, chosenCell, cells, notesMode]
   );
+
+  // The single physical-keyboard listener; on-screen keys call handleKeyClick directly.
+  useEffect(() => {
+    const listener = (e: KeyboardEvent) => {
+      if (confirm !== null || e.metaKey || e.ctrlKey || e.altKey) {
+        return;
+      }
+      handleKeyClick(e.key);
+    };
+    window.addEventListener('keyup', listener);
+    return () => {
+      window.removeEventListener('keyup', listener);
+    };
+  }, [handleKeyClick, confirm]);
 
   const togglePauseClick = useCallback(() => {
     if (status === GameStatus.Paused) {
@@ -238,19 +298,73 @@ export default function Sudoku({
     }
   }, [status]);
 
+  const handleHintClick = useCallback(() => {
+    if (hints <= 0 || status !== GameStatus.Playing) {
+      return;
+    }
+    let pos = chosenCell;
+    const target = cells[pos];
+    if (pos === -1 || !target || target.prefilled || target.value === target.answer) {
+      const unsolved = Object.keys(cells).filter((k) => {
+        const c = cells[Number(k)];
+        return !c.prefilled && c.value !== c.answer;
+      });
+      if (unsolved.length === 0) {
+        return;
+      }
+      pos = Number(unsolved[Math.floor(Math.random() * unsolved.length)]);
+    }
+    const hinted = cells[pos];
+    const newCells = { ...cells };
+    newCells[pos] = { ...hinted, value: hinted.answer };
+    setCells(newCells);
+    setNotes((prev) => ({ ...prev, [pos]: [] }));
+    setHints((v) => v - 1);
+    setChosenCell(pos);
+    sendGTMEvent({ event: 'hint_used' });
+  }, [hints, status, chosenCell, cells]);
+
+  const confirmNewGame = useCallback(() => {
+    setConfirm({
+      title: 'Continue?',
+      message: 'Creating a new game will clear the current puzzle.',
+      action: () => newGame(difficulty),
+    });
+  }, [newGame, difficulty]);
+
   const handleDifficultyClick = useCallback(
     (theme: Theme, newDifficulty: Difficulty) => {
       if (newDifficulty === difficulty) {
         return;
       }
-      setDeprecated(1);
+      const link = theme === Theme.Classic ? `/${newDifficulty}` : `/${theme}/${newDifficulty}`;
+      const abandon = () => {
+        navigating.current = true;
+        // Mark the save as deprecated so the destination page starts fresh.
+        saveGame(storagePrefix, {
+          puzzle,
+          cells,
+          notes,
+          difficulty,
+          deprecated: 1,
+          mistakes,
+          hints,
+          chances,
+        });
+        window.location.href = link;
+      };
+      if (status === GameStatus.Playing) {
+        setConfirm({
+          title: 'Switch difficulty?',
+          message: 'Changing difficulty will discard your current puzzle.',
+          action: abandon,
+        });
+      } else {
+        abandon();
+      }
     },
-    [difficulty]
+    [difficulty, status, puzzle, cells, notes, storagePrefix, mistakes, hints, chances]
   );
-
-  const handleNewGame = useCallback(() => {
-    newGame(difficulty);
-  }, [newGame, difficulty]);
 
   const goSecondChance = useCallback(() => {
     if (chances > 0) {
@@ -291,7 +405,7 @@ export default function Sudoku({
 
   return (
     <>
-      <div className="flex items-center justify-center font-medium text-gray-500 dark:text-gray-200">
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 font-medium text-gray-500 dark:text-gray-200">
         <div className="text-base font-bold sm:text-lg">
           <DifficultySelect
             theme={themed.type()}
@@ -299,20 +413,44 @@ export default function Sudoku({
             onClick={handleDifficultyClick}
           />
         </div>
-        <div className="ml-4">Mistakes: {`${mistakes}`}</div>
-        <div className="ml-4 flex items-center justify-center">
+        <div
+          className={classnames('text-base sm:text-lg', {
+            'font-bold text-red-500 dark:text-red-400': mistakes >= DEFAULT_MAX_MISTAKES,
+          })}
+        >
+          Mistakes: {`${mistakes}/${DEFAULT_MAX_MISTAKES + 1}`}
+        </div>
+        <div className="flex items-center justify-center text-base sm:text-lg">
           <span>{formatPlaytime(playtime)}</span>
-          <div className="ml-1 hover:cursor-pointer" onClick={togglePauseClick}>
+          <button
+            type="button"
+            aria-label={status === GameStatus.Paused ? 'Resume game' : 'Pause game'}
+            onClick={togglePauseClick}
+            className="ml-1 rounded p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+          >
             {status === GameStatus.Paused ? (
               <PlayIcon className="h-4 w-4" />
             ) : (
               <PauseIcon className="h-4 w-4" />
             )}
-          </div>
+          </button>
         </div>
+        <button
+          type="button"
+          onClick={handleHintClick}
+          disabled={hints <= 0}
+          className={classnames(
+            'rounded border px-2 py-0.5 text-sm font-bold',
+            hints > 0
+              ? 'border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white'
+              : 'pointer-events-none border-gray-300 text-gray-300 dark:border-gray-600 dark:text-gray-600'
+          )}
+        >
+          Hint ({hints})
+        </button>
       </div>
       <div className="mt-2 flex flex-row justify-center">
-        <div className="w-full max-w-sm sm:w-[404px] sm:max-w-none">
+        <div className="w-full max-w-sm sm:w-[404px] sm:max-w-none lg:w-[480px]">
           <BoardMemoized
             themed={themed}
             cells={cells}
@@ -320,17 +458,21 @@ export default function Sudoku({
             chosen={chosenCell}
             status={status}
             chances={chances}
+            difficulty={difficulty}
+            playtime={playtime}
+            mistakes={mistakes}
             onCellClick={handleCellChosen}
             onResumeClick={togglePauseClick}
-            onNewGameClick={handleNewGame}
+            onNewGameClick={() => newGame(difficulty)}
             onSecondChanceClick={handleSecondChance}
           />
         </div>
-        <div className="ml-8 hidden sm:block sm:w-48">
+        <div className="ml-8 hidden sm:block sm:w-48 lg:w-56">
           <KeyboardHorizontal
             themed={themed}
+            notesMode={notesMode}
             onClick={handleKeyClick}
-            onNewGameClick={() => setIsNewGameModalOpen(true)}
+            onNewGameClick={confirmNewGame}
           />
         </div>
       </div>
@@ -339,22 +481,22 @@ export default function Sudoku({
           <hr className="my-4 h-px border-0 bg-gray-200 dark:bg-gray-700" />
           <Keyboard
             themed={themed}
+            notesMode={notesMode}
             onClick={handleKeyClick}
-            onNewGameClick={() => setIsNewGameModalOpen(true)}
+            onNewGameClick={confirmNewGame}
           />
         </div>
       </div>
       <NewGameModal
-        open={isNewGameModalOpen}
+        open={confirm !== null}
+        title={confirm?.title}
+        message={confirm?.message}
         handleClose={() => {
-          setIsNewGameModalOpen(false);
+          setConfirm(null);
         }}
         handleConfirm={() => {
-          newGame(difficulty);
-          setIsNewGameModalOpen(false);
-        }}
-        handleCancel={() => {
-          setIsNewGameModalOpen(false);
+          confirm?.action();
+          setConfirm(null);
         }}
       />
       <RewardedAd

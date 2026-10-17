@@ -9,10 +9,21 @@ type Props = {
   status?: GameStatus;
   value?: CellValue;
   notes?: number[];
-  onClick?: () => void;
+  ariaLabel?: string;
+  position: number;
+  onCellClick?: (position: number) => void;
 };
 
-export const Cell = ({ className, themed, status, value, notes, onClick }: Props) => {
+export const Cell = ({
+  className,
+  themed,
+  status,
+  value,
+  notes,
+  ariaLabel,
+  position,
+  onCellClick,
+}: Props) => {
   const classes = classnames('board-cell', className || '');
   if (status === GameStatus.Paused) {
     return (
@@ -31,12 +42,17 @@ export const Cell = ({ className, themed, status, value, notes, onClick }: Props
     }
     content = themed.getElement(value.value, elementStatus);
   } else if (notes && notes.length > 0) {
-    content = <CellNote notes={notes} />;
+    content = <CellNote notes={notes} themed={themed} />;
   }
 
   return (
     <Square>
-      <div className={classes} onClick={onClick}>
+      <div
+        role="button"
+        aria-label={ariaLabel}
+        className={classes}
+        onClick={() => onCellClick?.(position)}
+      >
         {content}
       </div>
     </Square>

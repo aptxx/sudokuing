@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const Key = ({ children, className, value = '', onClick }: Props) => {
-  const handleClick: React.MouseEventHandler<HTMLDivElement> = (event) => {
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
     onClick?.(value);
     event.currentTarget.blur();
   };
@@ -17,8 +17,8 @@ export const Key = ({ children, className, value = '', onClick }: Props) => {
   const classes = classnames('keyboard-key', className || '', {});
 
   return (
-    <div aria-label={`key-${value}`} onClick={handleClick} className={classes}>
+    <button type="button" onClick={handleClick} className={classes}>
       {children || value}
-    </div>
+    </button>
   );
 };

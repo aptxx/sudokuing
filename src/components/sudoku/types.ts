@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 export enum ElementStatus {
   Normal = 0,
   Correct = 1,
-  Incorrect = 2
+  Incorrect = 2,
 }
 
 export type Element = ReactNode | string | number;
@@ -15,17 +15,17 @@ export enum Theme {
 }
 
 export interface Themed {
-  type(): Theme
+  type(): Theme;
   getElementHolder(): Element;
   getElement(key: number, status: ElementStatus): Element;
 }
 
 export enum Difficulty {
   Easy = 'easy',
-  Medium ='medium',
+  Medium = 'medium',
   Hard = 'hard',
-  Expert ='expert',
-  Crazy = 'crazy'
+  Expert = 'expert',
+  Crazy = 'crazy',
 }
 
 export enum GameStatus {
@@ -44,10 +44,10 @@ export type GameState = {
   mistakes: number;
   hints: number;
   chances: number;
-}
+};
 
 export type CellValue = {
   value: number; // user input
   answer: number;
   prefilled: boolean;
-}
+};

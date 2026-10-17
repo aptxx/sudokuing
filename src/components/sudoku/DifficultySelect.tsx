@@ -41,14 +41,21 @@ export default function DifficultySelect({ theme, current, onClick }: Props) {
         {options.map((option) => (
           <Menu.Item key={option.difficulty}>
             <div
-              className={classnames('bg-gray-100 px-1 pl-1 pr-6 hover:bg-gray-200 dark:bg-black', {
-                'pointer-events-none cursor-default text-blue-500': option.difficulty === current,
-              })}
+              className={classnames(
+                'bg-gray-100 px-1 pl-1 pr-6 hover:bg-gray-200 dark:bg-black dark:hover:bg-gray-800',
+                {
+                  'pointer-events-none cursor-default text-blue-500': option.difficulty === current,
+                }
+              )}
             >
+              {/* Navigation is owned by onOptionClick (it may need to confirm first). */}
               <a
                 href={generateGameLink(theme, option.difficulty)}
                 title={`${theme} ${option.difficulty} - ${SITE_TITLE}`}
-                onClick={() => option.difficulty !== current && onOptionClick(option.difficulty)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onOptionClick(option.difficulty);
+                }}
               >
                 {capitalize(option.difficulty)}
               </a>

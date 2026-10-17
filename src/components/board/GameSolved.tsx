@@ -1,4 +1,6 @@
 import Overlay from '../common/Overlay';
+import { Difficulty } from '../sudoku/types';
+import { capitalize } from '@/lib/utils';
 
 function formatPlaytime(playtime: number): string {
   const minutes = Math.floor(playtime / 60);
@@ -8,9 +10,15 @@ function formatPlaytime(playtime: number): string {
 
 export default function GameSolved({
   open,
+  difficulty,
+  playtime,
+  mistakes,
   onNewGameClick,
 }: {
   open: boolean;
+  difficulty?: Difficulty;
+  playtime?: number;
+  mistakes?: number;
   onNewGameClick: () => void;
 }) {
   return (
@@ -23,13 +31,19 @@ export default function GameSolved({
           <p className="pt-2 text-sm font-bold text-gray-500 dark:text-gray-300">
             Puzzle is solved. You&apos;re an amazing player!
           </p>
-          <div className="mt-2 flex justify-center text-xs">
-            <span
-              className="text-blue-600 hover:cursor-pointer dark:text-blue-400"
+          <div className="mt-3 flex justify-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+            {difficulty && <span>{capitalize(difficulty)}</span>}
+            {playtime !== undefined && <span>{formatPlaytime(playtime)}</span>}
+            {mistakes !== undefined && <span>{mistakes} mistakes</span>}
+          </div>
+          <div className="mt-3 flex justify-center text-xs">
+            <button
+              type="button"
+              className="rounded text-blue-600 hover:cursor-pointer hover:underline dark:text-blue-400"
               onClick={onNewGameClick}
             >
               New Game
-            </span>
+            </button>
           </div>
         </div>
       </div>

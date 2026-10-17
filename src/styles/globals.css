@@ -32,11 +32,11 @@
   }
 
   .keyboard-key {
-    @apply flex cursor-pointer select-none items-center justify-center rounded border border-gray-200 dark:border-gray-600;
+    @apply flex cursor-pointer touch-manipulation select-none items-center justify-center rounded border border-gray-200 dark:border-gray-600;
   }
 
   .board-cell {
-    @apply flex h-full w-full items-center justify-center text-center align-middle;
+    @apply flex h-full w-full touch-manipulation items-center justify-center text-center align-middle;
   }
 
   .board-cell-box {
@@ -57,7 +57,7 @@ html {
 body {
   color: rgb(var(--foreground-rgb));
   background-color: rgb(var(--background-rgb));
-  font-family: 'Open Sans', Arial, sans-serif;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   max-width: 100%;
   overflow-x: hidden;
 }

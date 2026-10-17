@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { PlayIcon } from '@heroicons/react/20/solid';
 import { Cell } from '@/components/board/Cell';
 import Square from '../common/Square';
-import { CellValue, GameStatus, Themed } from '../sudoku/types';
+import { CellValue, Difficulty, GameStatus, Themed } from '../sudoku/types';
 import GameSolved from './GameSolved';
 import GameOver from './GameOver';
 import Loading from './Loading';
@@ -48,6 +48,9 @@ type Props = {
   chosen?: number;
   status?: GameStatus;
   chances?: number;
+  difficulty?: Difficulty;
+  playtime?: number;
+  mistakes?: number;
   onCellClick?: (position: number) => void;
   onResumeClick?: () => void;
   onNewGameClick?: () => void;
@@ -61,17 +64,22 @@ export const Board = ({
   chosen,
   status,
   chances,
+  difficulty,
+  playtime,
+  mistakes,
   onCellClick,
   onResumeClick,
   onNewGameClick,
   onSecondChanceClick,
 }: Props) => {
   const chosenCell = chosen || -1;
+  const chosenValue = chosenCell >= 0 ? cells[chosenCell]?.value || 0 : 0;
   const elems = Array(81)
     .fill(0)
     .map((_, i) => {
       const isChosen = chosen === i;
       const isChosenRelated = isRelated(chosenCell, i);
+      const isSameValue = chosenValue > 0 && cells[i]?.value === chosenValue && !isChosen;
 
       const row = Math.floor(i / 9);
       const col = i % 9;
@@ -82,29 +90,39 @@ export const Board = ({
         'border-r-gray-600 dark:border-r-gray-300': (col + 1) % 3 === 0,
         'bg-blue-200 dark:bg-gray-700': isChosen,
         'bg-blue-50 dark:bg-gray-900': !isChosen && isChosenRelated,
+        'bg-indigo-200 dark:bg-indigo-900': isSameValue,
       });
+      const value = cells[i];
       return (
         <CellMemoized
           key={i}
           className={classes}
           status={status}
           themed={themed}
-          value={cells[i]}
+          value={value}
           notes={notes[i]}
-          onClick={() => onCellClick?.(i)}
+          ariaLabel={`Row ${row + 1} column ${col + 1}${
+            value && value.value !== 0 ? `, ${value.value}` : ', empty'
+          }`}
+          position={i}
+          onCellClick={onCellClick}
         />
       );
     });
 
   return (
     <Square id="sudoku-board">
-      <div className="relative grid h-full w-full text-2xl font-normal text-gray-700 dark:text-gray-200">
-        <div className="grid-rows-9 grid grid-cols-9 gap-0 rounded border border-solid border-gray-600 dark:border-gray-300">
+      <div className="relative grid h-full w-full text-2xl font-normal text-gray-700 dark:text-gray-200 lg:text-3xl">
+        <div
+          role="grid"
+          aria-label="Sudoku board"
+          className="grid-rows-9 grid grid-cols-9 gap-0 rounded border border-solid border-gray-600 dark:border-gray-300"
+        >
           {elems}
         </div>
         {status == GameStatus.Paused && (
           <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center text-blue-500 opacity-100">
-            <button onClick={() => onResumeClick?.()}>
+            <button aria-label="Resume game" onClick={() => onResumeClick?.()}>
               <PlayIcon className="h-16 w-16" />
             </button>
           </div>
@@ -121,7 +139,13 @@ export const Board = ({
         )}
         {status == GameStatus.GameSolved && (
           <div className="absolute left-0 top-0 h-full w-full">
-            <GameSolved open={true} onNewGameClick={() => onNewGameClick?.()} />
+            <GameSolved
+              open={true}
+              difficulty={difficulty}
+              playtime={playtime}
+              mistakes={mistakes}
+              onNewGameClick={() => onNewGameClick?.()}
+            />
           </div>
         )}
         {(!cells || Object.keys(cells).length == 0) && (

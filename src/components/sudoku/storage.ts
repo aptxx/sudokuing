@@ -1,4 +1,4 @@
-import { GameState } from "./types";
+import { GameState } from './types';
 
 export function loadGame(prefix: string): null | GameState {
   const data = localStorage.getItem(`${prefix || ''}game`);

@@ -1,24 +1,23 @@
 import { KeyboardBase } from './KeyboardBase';
 import { Key } from './Key';
 import Square from '../common/Square';
+import classnames from 'classnames';
 import { ElementStatus, Themed } from '../sudoku/types';
 
 type Props = {
   themed: Themed;
+  notesMode: boolean;
   onClick: (value: string) => void;
   onNewGameClick?: () => void;
 };
 
-export const KeyboardHorizontal = ({ themed, onClick, onNewGameClick }: Props) => {
+export const KeyboardHorizontal = ({ themed, notesMode, onClick, onNewGameClick }: Props) => {
   const onValueClick = (value: string) => {
     onClick?.(value);
   };
 
   return (
-    <KeyboardBase
-      className="text-xl font-normal text-gray-600 dark:text-gray-200"
-      onClick={onValueClick}
-    >
+    <KeyboardBase className="text-xl font-normal text-gray-600 dark:text-gray-200">
       <Square>
         <div className="grid grid-cols-3 grid-rows-3 gap-1">
           {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((key) => (
@@ -42,6 +41,19 @@ export const KeyboardHorizontal = ({ themed, onClick, onNewGameClick }: Props) =
         onClick={onValueClick}
       >
         Delete
+      </Key>
+      <Key
+        className={classnames(
+          'mt-2 h-10 w-full text-base md:h-10',
+          notesMode
+            ? 'bg-blue-500 text-gray-100'
+            : 'bg-gray-50 text-gray-600 hover:bg-gray-100 dark:bg-black dark:text-gray-200 dark:hover:bg-gray-800'
+        )}
+        key={'n'}
+        value={'n'}
+        onClick={onValueClick}
+      >
+        Notes
       </Key>
       <Key
         className="mt-2 h-10 w-full bg-blue-500 text-base text-gray-100 hover:bg-blue-600 md:h-10"
