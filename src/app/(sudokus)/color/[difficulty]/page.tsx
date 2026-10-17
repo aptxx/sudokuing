@@ -5,26 +5,28 @@ import GamePageContent from '@/components/sudoku/GamePageContent';
 import ElementsLine from '@/components/common/ElementsLine';
 import themeconfig from './theme';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 type Props = {
   params: Promise<{ difficulty: string }>;
 };
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return Object.values(Difficulty).map((difficulty) => ({ difficulty }));
+function parseDifficulty(value: string): Difficulty {
+  if (!Object.values(Difficulty).includes(value as Difficulty)) {
+    notFound();
+  }
+  return value as Difficulty;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { difficulty } = await params;
-  return generateBaseMetadata(Theme.Color, difficulty as Difficulty);
+  return generateBaseMetadata(Theme.Color, parseDifficulty(difficulty));
 }
 
 export default async function Page({ params }: Props) {
   const theme = Theme.Color;
   const { difficulty } = await params;
-  const jsonLd = generateLinkedData(theme, difficulty as Difficulty);
+  const jsonLd = generateLinkedData(theme, parseDifficulty(difficulty));
 
   return (
     <>
@@ -36,13 +38,13 @@ export default async function Page({ params }: Props) {
       <div className="x-container mb-12">
         <Sudoku
           initTheme={theme}
-          initDifficulty={difficulty as Difficulty}
+          initDifficulty={parseDifficulty(difficulty)}
           storagePrefix={`${theme}_`}
         />
       </div>
       <GamePageContent
         theme={theme}
-        difficulty={difficulty as Difficulty}
+        difficulty={parseDifficulty(difficulty)}
         elements={<ElementsLine elements={themeconfig.getElements()} />}
       />
     </>

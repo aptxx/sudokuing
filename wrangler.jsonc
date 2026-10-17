@@ -11,11 +11,10 @@
   "r2_buckets": [
     // Use R2 incremental cache
     // See https://opennext.js.org/cloudflare/caching
+    // Required only if routes use generateStaticParams/dynamicParams=false:
+    // without a cache backend those routes 404 on Workers.
     // {
     // 	"binding": "NEXT_INC_CACHE_R2_BUCKET",
-    // 	// Create the bucket before deploying
-    // 	// You can change the bucket name if you want
-    // 	// See https://developers.cloudflare.com/workers/wrangler/commands/#r2-bucket-create
     // 	"bucket_name": "cache"
     // }
   ]
