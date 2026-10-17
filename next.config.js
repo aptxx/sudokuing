@@ -2,10 +2,6 @@
 
 const nextConfig = {
   reactStrictMode: false,
-  i18n: {
-    locales: ['en'],
-    defaultLocale: 'en',
-  },
   async rewrites() {
     return [
       { source: '/easy', destination: '/classic/easy' },

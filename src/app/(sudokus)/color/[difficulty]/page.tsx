@@ -1,28 +1,30 @@
 import Sudoku from '@/components/sudoku/Sudoku';
 import { Difficulty, Theme } from '@/components/sudoku/types';
-import { generateBaseMetadata, generateIinkedData } from '@/lib/seo';
-import { capitalize } from '@/lib/utils';
-import { Metadata, ResolvingMetadata } from 'next';
-import themeconfig from './theme';
+import { generateBaseMetadata, generateLinkedData } from '@/lib/seo';
+import GamePageContent from '@/components/sudoku/GamePageContent';
 import ElementsLine from '@/components/common/ElementsLine';
+import themeconfig from './theme';
+import { Metadata } from 'next';
 
 type Props = {
   params: Promise<{ difficulty: string }>;
 };
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return Object.values(Difficulty).map((difficulty) => ({ difficulty }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { difficulty } = await params;
   return generateBaseMetadata(Theme.Color, difficulty as Difficulty);
 }
 
 export default async function Page({ params }: Props) {
   const theme = Theme.Color;
-  const { difficulty: _difficulty } = await params;
-  const difficulty = _difficulty as Difficulty;
-  const jsonLd = generateIinkedData(theme, difficulty);
+  const { difficulty } = await params;
+  const jsonLd = generateLinkedData(theme, difficulty as Difficulty);
 
   return (
     <>
@@ -32,64 +34,17 @@ export default async function Page({ params }: Props) {
       />
 
       <div className="x-container mb-12">
-        <Sudoku initTheme={theme} initDifficulty={difficulty} storagePrefix={`${theme}_`} />
+        <Sudoku
+          initTheme={theme}
+          initDifficulty={difficulty as Difficulty}
+          storagePrefix={`${theme}_`}
+        />
       </div>
-
-      <div className="x-container post-block mb-12">
-        <h1>{`${capitalize(theme)} Sudoku ${capitalize(difficulty)}`}</h1>
-        <div className="post-content">
-          You are playing {`${theme} sudoku ${difficulty}`}. The basic elements are{' '}
-          <ElementsLine elements={themeconfig.getElements()} />, your goal is to fill the 9x9 grid
-          with the basic elements.
-        </div>
-      </div>
-      <div className="x-container post-block mb-12">
-        <h2>{`How to play ${theme} Sudoku`}</h2>
-        <div>
-          <p className="mb-2">
-            The game board consists of a 9x9 grid, divided into 9 smaller 3x3 squares. The game goal
-            is to fill each square with basic elements, ensuring that every row, column, and small
-            square contains each element exactly once.
-          </p>
-          <ul>
-            <li>Fill in the remaining empty squares.</li>
-            <li>Fill each 3x3 square with the basic elements of {theme}.</li>
-            <li>
-              Each row, column, and 3x3 box must contain the basic elements, with no repetitions.
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div className="x-container post-block mb-12">
-        <h2>Tips</h2>
-        <div>
-          <p className="mb-2">
-            Sudoku is a game of logic and patience. With practice, you&apos;ll improve your pattern
-            recognition and deduction skills, allowing you to solve even the most challenging
-            puzzles. Happy Sudoku solving!
-          </p>
-          <ul>
-            <li>
-              Look for squares that have only one possible element based on the existing elements in
-              their row, column, and 3x3 box. These &quot;unique candidates&quot; can be filled in
-              immediately, providing valuable clues for the rest of the puzzle.
-            </li>
-            <li>
-              Use logical deduction to eliminate possibilities. Look for elements that are already
-              present in a row, column, or 3x3 box, and eliminate them as options for other empty
-              squares within that unit. Repeat this process until you&apos;ve narrowed down the
-              possibilities.
-            </li>
-            <li>
-              When you reach a point where no obvious moves can be made, try making an educated
-              guess by selecting a square with two or three potential elements. Follow the
-              consequences of each choice, keeping track of any contradictions that arise. If you
-              encounter a contradiction, backtrack and try the alternative element(s) for that
-              square.
-            </li>
-          </ul>
-        </div>
-      </div>
+      <GamePageContent
+        theme={theme}
+        difficulty={difficulty as Difficulty}
+        elements={<ElementsLine elements={themeconfig.getElements()} />}
+      />
     </>
   );
 }

@@ -1,29 +1,31 @@
-import { Metadata } from "next";
-import { Difficulty, Theme } from "@/components/sudoku/types";
-import { capitalize } from "./utils";
-import { BASE_URL, SITE_DESCRIPTION, SITE_KEYWORDS } from "@/config/setting";
+import { Metadata } from 'next';
+import { Difficulty, Theme } from '@/components/sudoku/types';
+import { capitalize } from './utils';
+import { difficultyContent } from './content';
+import { BASE_URL, SITE_KEYWORDS, SITE_TITLE } from '@/config/setting';
 
 export type PageInfo = {
-  title: string,
-  keywords: string,
-  description: string,
-  url:  string,
-}
+  title: string;
+  keywords: string;
+  description: string;
+  url: string;
+};
 
 export function generatePageInfo(theme: Theme, difficulty: Difficulty): PageInfo {
   const themeCap = capitalize(theme);
   const difficultyCap = capitalize(difficulty);
 
   return {
-    title: `${themeCap} Sudoku ${difficultyCap}`,
+    title: `${themeCap} Sudoku ${difficultyCap} - Play Free Online`,
     keywords: `${SITE_KEYWORDS}, ${themeCap} Sudoku, Sudoku ${difficultyCap}`,
-    description: `${themeCap} Sudoku ${difficultyCap} - ${SITE_DESCRIPTION}`,
-    url: theme === Theme.Classic ? `${BASE_URL}/${difficulty}` : `${BASE_URL}/${theme}/${difficulty}`
-  }
+    description: `${themeCap} Sudoku ${difficultyCap} — ${difficultyContent[difficulty].meta}. Free online, no download, no signup, one guaranteed solution.`,
+    url:
+      theme === Theme.Classic ? `${BASE_URL}/${difficulty}` : `${BASE_URL}/${theme}/${difficulty}`,
+  };
 }
 
 export function generateBaseMetadata(theme: Theme, difficulty: Difficulty): Metadata {
-  const pageinfo = generatePageInfo(theme, difficulty as Difficulty);
+  const pageinfo = generatePageInfo(theme, difficulty);
   return {
     title: pageinfo.title,
     keywords: pageinfo.keywords,
@@ -34,14 +36,7 @@ export function generateBaseMetadata(theme: Theme, difficulty: Difficulty): Meta
       locale: 'en_US',
       url: pageinfo.url,
       description: pageinfo.description,
-      images: [
-        {
-          url: `${BASE_URL}/opengraph-image.png`,
-          width: 512,
-          height: 512,
-          alt: pageinfo.title,
-        },
-      ],
+      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: pageinfo.title }],
     },
     alternates: {
       canonical: pageinfo.url,
@@ -49,19 +44,24 @@ export function generateBaseMetadata(theme: Theme, difficulty: Difficulty): Meta
   };
 }
 
-export function generateIinkedData(theme: Theme, difficulty: Difficulty): any {
+export function generateLinkedData(theme: Theme, difficulty: Difficulty) {
   const pageinfo = generatePageInfo(theme, difficulty);
   return {
-      '@context': 'https://schema.org',
-      '@type': 'WebSite',
-      name: pageinfo.title,
-      description: pageinfo.description,
-      operatingSystem: 'any',
-      offers: {
-        '@type': 'Offer',
-        category: 'free',
-        price: 0,
-        priceCurrency: 'USD',
-    }
-  }
+    '@context': 'https://schema.org',
+    '@type': 'VideoGame',
+    name: pageinfo.title,
+    description: pageinfo.description,
+    url: pageinfo.url,
+    genre: ['Puzzle', 'Logic'],
+    gamePlatform: 'Web Browser',
+    playMode: 'SinglePlayer',
+    applicationCategory: 'Game',
+    operatingSystem: 'Any',
+    isAccessibleForFree: true,
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_TITLE,
+      url: BASE_URL,
+    },
+  };
 }
